@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Lindner Scanner</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--card:#101010;--line:#242424;--mut:#8a8a8a;--blue:#2f7bff;--yel:#ffc21a;--red:#ff3b3b;--ease:cubic-bezier(.22,1,.36,1)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0}
+html,body{background:var(--bg);color:#fff;font-family:Poppins,sans-serif;overscroll-behavior:none}
+body{min-height:100dvh;padding:env(safe-area-inset-top) 0 120px}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(0,0,0,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header img{width:46px;height:46px;object-fit:contain}
+header h1{font-size:18px;font-weight:600;letter-spacing:.2px;flex:1;line-height:1.1}
+header h1 small{display:block;font-size:11px;font-weight:400;color:var(--mut)}
+button{font:inherit;color:inherit;border:0;cursor:pointer;transition:transform .25s var(--ease),opacity .2s,background .2s}
+button:active{transform:scale(.94)}
+.ghost{background:#1a1a1a;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px}
+main{padding:16px;max-width:640px;margin:auto}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;text-align:center;cursor:pointer;transition:transform .3s var(--ease),border-color .3s}
+.stat.on{border-color:#fff}.stat:active{transform:scale(.95)}
+.stat b{display:block;font-size:24px;font-weight:700}.stat span{font-size:11px;color:var(--mut)}
+.stat i{display:block;width:22px;height:4px;border-radius:4px;margin:0 auto 8px}
+.search{width:100%;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 16px;color:#fff;font:inherit;font-size:14px;outline:0;margin-bottom:14px;transition:border-color .3s}
+.search:focus{border-color:#fff}
+.item{position:relative;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 14px 20px;margin-bottom:10px;overflow:hidden;cursor:pointer;animation:in .6s var(--ease) both;transition:transform .3s var(--ease)}
+.item:active{transform:scale(.97)}
+.item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c)}
+.item .t{flex:1;min-width:0}.item h3{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item p{font-size:11px;color:var(--mut);margin-top:2px}
+.badge{text-align:right;flex-shrink:0}.badge b{display:block;font-size:13px;font-weight:600;color:var(--c)}
+.badge span{font-size:11px;color:var(--mut)}
+.blue{--c:var(--blue)}.yel{--c:var(--yel)}.red{--c:var(--red)}
+@keyframes in{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+.empty{text-align:center;color:var(--mut);padding:60px 20px;font-size:14px;animation:in .6s var(--ease)}
+.fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:6;background:#fff;color:#000;border-radius:999px;padding:16px 24px;font-weight:600;font-size:15px;display:flex;gap:10px;align-items:center;box-shadow:0 10px 40px rgba(255,255,255,.18);animation:in .8s .2s var(--ease) both}
+.fab svg{width:22px;height:22px}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:opacity .35s;z-index:10}
+.sheet-bg.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:11;max-width:640px;margin:auto;background:#0b0b0b;border:1px solid var(--line);border-radius:28px 28px 0 0;padding:12px 20px calc(24px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .55s var(--ease);max-height:92dvh;overflow:auto}
+.sheet.on{transform:none}
+.grab{width:42px;height:4px;background:#333;border-radius:4px;margin:0 auto 16px}
+.sheet h2{font-size:18px;font-weight:600;margin-bottom:14px}
+.cam{position:relative;aspect-ratio:4/3;border-radius:20px;overflow:hidden;background:#111;margin-bottom:14px}
+.cam video{width:100%;height:100%;object-fit:cover}
+.frame{position:absolute;inset:18% 10%;border:2px solid #fff;border-radius:16px;box-shadow:0 0 0 999px rgba(0,0,0,.45)}
+.frame::after{content:"";position:absolute;left:6%;right:6%;height:2px;background:var(--red);box-shadow:0 0 12px var(--red);animation:scan 1.8s ease-in-out infinite alternate}
+@keyframes scan{from{top:8%}to{top:92%}}
+.lbl{font-size:12px;color:var(--mut);margin:12px 0 6px;display:block}
+.inp{width:100%;background:#151515;border:1px solid var(--line);border-radius:14px;padding:14px 16px;color:#fff;font:inherit;font-size:15px;outline:0;transition:border-color .3s}
+.inp:focus{border-color:#fff}
+.row{display:flex;gap:10px;margin-top:18px}
+.btn{flex:1;padding:15px;border-radius:16px;font-weight:600;font-size:14px;background:#1a1a1a;border:1px solid var(--line)}
+.btn.main{background:#fff;color:#000;border:0}.btn.del{color:var(--red)}
+.hint{font-size:12px;color:var(--mut);margin-top:6px;min-height:18px}
+.toast{position:fixed;left:50%;top:calc(80px + env(safe-area-inset-top));transform:translate(-50%,-30px);background:#fff;color:#000;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:500;opacity:0;z-index:30;transition:.45s var(--ease);pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+#login{position:fixed;inset:0;z-index:40;background:#000;display:none;flex-direction:column;justify-content:center;padding:30px;gap:4px}
+#login.on{display:flex}#login img{width:110px;margin:0 auto 20px}
+.hide{display:none!important}
+</style></head><body>
+<header>
+  <img src="logo.png" alt="Lindner">
+  <h1>Lindner Scanner<small id="mode">...</small></h1>
+  <button class="ghost hide" id="install">Instalar</button>
+</header>
+<main>
+  <div class="stats">
+    <div class="stat" data-f="red"><i style="background:var(--red)"></i><b id="nr">0</b><span>até 1 mês</span></div>
+    <div class="stat" data-f="yel"><i style="background:var(--yel)"></i><b id="ny">0</b><span>até 3 meses</span></div>
+    <div class="stat" data-f="blue"><i style="background:var(--blue)"></i><b id="nb">0</b><span>longe</span></div>
+  </div>
+  <input class="search" id="q" placeholder="Buscar produto ou código" autocomplete="off">
+  <div id="list"></div>
+</main>
+<button class="fab" id="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3M4 12h16"/></svg>Escanear</button>
+
+<div class="sheet-bg" id="bg"></div>
+<div class="sheet" id="sheet">
+  <div class="grab"></div>
+  <div id="vScan">
+    <h2>Aponte para o código de barras</h2>
+    <div class="cam"><video id="video" playsinline muted></video><div class="frame"></div></div>
+    <p class="hint" id="scanHint"></p>
+    <div class="row"><button class="btn" id="manual">Digitar código</button><button class="btn" id="cancel1">Fechar</button></div>
+  </div>
+  <div id="vForm" class="hide">
+    <h2 id="fTitle">Novo produto</h2>
+    <label class="lbl">Código de barras</label>
+    <input class="inp" id="fCode" inputmode="numeric" placeholder="7891000100103">
+    <label class="lbl">Nome do produto</label>
+    <input class="inp" id="fName" placeholder="Nome do produto">
+    <p class="hint" id="nameHint"></p>
+    <label class="lbl">Validade (dia/mês/ano)</label>
+    <input class="inp" id="fDate" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10">
+    <div class="row">
+      <button class="btn del hide" id="fDel">Excluir</button>
+      <button class="btn" id="fRescan">Escanear</button>
+      <button class="btn main" id="fSave">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<form id="login" onsubmit="return false">
+  <img src="logo.png" alt="">
+  <label class="lbl">E-mail</label><input class="inp" id="lMail" type="email" autocomplete="username">
+  <label class="lbl">Senha</label><input class="inp" id="lPass" type="password" autocomplete="current-password">
+  <p class="hint" id="lErr" style="color:var(--red)"></p>
+  <div class="row"><button class="btn main" id="lGo">Entrar</button></div>
+</form>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import {cfg} from './firebase-config.js';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const LOCAL=!cfg.apiKey||cfg.apiKey.startsWith('COLE');
+let items=[], filter=null, editId=null, stream=null, loopOn=false, fb={};
+const V='https://www.gstatic.com/firebasejs/10.12.2/';
+
+/* ---------- armazenamento (Firebase ou local) ---------- */
+const store={
+  async save(it){
+    if(LOCAL){const i=items.findIndex(x=>x.id===it.id);i>=0?items[i]=it:items.push(it);localStorage.ls=JSON.stringify(items);render()}
+    else await fb.setDoc(fb.doc(fb.db,'produtos',it.id),it);
+  },
+  async del(id){
+    if(LOCAL){items=items.filter(x=>x.id!==id);localStorage.ls=JSON.stringify(items);render()}
+    else await fb.deleteDoc(fb.doc(fb.db,'produtos',id));
+  }
+};
+async function init(){
+  if(LOCAL){$('#mode').textContent='modo local (sem servidor)';items=JSON.parse(localStorage.ls||'[]');render();return}
+  const [a,au,fs]=await Promise.all([import(V+'firebase-app.js'),import(V+'firebase-auth.js'),import(V+'firebase-firestore.js')]);
+  const app=a.initializeApp(cfg), auth=au.getAuth(app);
+  fb={...fs,db:fs.initializeFirestore(app,{localCache:fs.persistentLocalCache()})};
+  $('#mode').textContent='sincronizado • Firebase';
+  au.onAuthStateChanged(auth,u=>{
+    $('#login').classList.toggle('on',!u);
+    if(u)fb.onSnapshot(fb.collection(fb.db,'produtos'),s=>{items=s.docs.map(d=>d.data());render()});
+  });
+  $('#lGo').onclick=async()=>{try{$('#lErr').textContent='';await au.signInWithEmailAndPassword(auth,$('#lMail').value.trim(),$('#lPass').value)}catch{$('#lErr').textContent='E-mail ou senha incorretos'}};
+}
+
+/* ---------- datas e cores ---------- */
+const parse=s=>{const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s);if(!m)return null;const d=new Date(+m[3],+m[2]-1,+m[1]);return d.getMonth()==m[2]-1&&d.getDate()==+m[1]?d:null};
+const fmt=d=>d.toLocaleDateString('pt-BR');
+const addM=(d,n)=>{const x=new Date(d);x.setMonth(x.getMonth()+n);return x};
+function status(iso){
+  const t=new Date();t.setHours(0,0,0,0);const d=new Date(iso+'T00:00:00');
+  const days=Math.round((d-t)/864e5);
+  const cls=d<=addM(t,1)?'red':d<=addM(t,3)?'yel':'blue';
+  const txt=days<0?`Venceu há ${-days}d`:days==0?'Vence hoje':days==1?'Falta 1 dia':days<60?`Faltam ${days} dias`:`Faltam ${Math.round(days/30.4)} meses`;
+  return {cls,txt,d};
+}
+
+/* ---------- lista ---------- */
+function render(){
+  const q=$('#q').value.toLowerCase();
+  const all=items.map(i=>({...i,s:status(i.date)})).sort((a,b)=>a.s.d-b.s.d);
+  const cnt=c=>all.filter(i=>i.s.cls==c).length;
+  $('#nr').textContent=cnt('red');$('#ny').textContent=cnt('yel');$('#nb').textContent=cnt('blue');
+  $$('.stat').forEach(e=>e.classList.toggle('on',e.dataset.f==filter));
+  const show=all.filter(i=>(!filter||i.s.cls==filter)&&(i.name.toLowerCase().includes(q)||i.code.includes(q)));
+  $('#list').innerHTML=show.length?show.map((i,n)=>`<div class="item ${i.s.cls}" data-id="${i.id}" style="animation-delay:${Math.min(n,10)*45}ms"><div class="t"><h3>${esc(i.name)}</h3><p>${i.code}</p></div><div class="badge"><b>${fmt(i.s.d)}</b><span>${i.s.txt}</span></div></div>`).join(''):`<div class="empty">Nenhum produto ainda.<br>Toque em <b>Escanear</b> para começar.</div>`;
+}
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('#list').onclick=e=>{const el=e.target.closest('.item');if(el)openForm(items.find(i=>i.id==el.dataset.id))};
+$$('.stat').forEach(e=>e.onclick=()=>{filter=filter==e.dataset.f?null:e.dataset.f;render()});
+$('#q').oninput=render;
+
+/* ---------- sheet ---------- */
+const open=()=>{$('#bg').classList.add('on');$('#sheet').classList.add('on')};
+const close=()=>{stopCam();$('#bg').classList.remove('on');$('#sheet').classList.remove('on')};
+const view=v=>{$('#vScan').classList.toggle('hide',v!='scan');$('#vForm').classList.toggle('hide',v!='form')};
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2600)}
+$('#bg').onclick=close;$('#cancel1').onclick=close;
+$('#fab').onclick=()=>{editId=null;open();startScan()};
+$('#manual').onclick=()=>{stopCam();openForm()};
+$('#fRescan').onclick=startScan;
+
+/* ---------- câmera / leitor ---------- */
+async function startScan(){
+  view('scan');open();$('#scanHint').textContent='Iniciando câmera...';
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false});
+    const v=$('#video');v.srcObject=stream;await v.play();
+    if(!('BarcodeDetector' in window)){$('#scanHint').textContent='Leitor não suportado neste navegador. Use "Digitar código".';return}
+    const det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39','itf']});
+    $('#scanHint').textContent='Procurando código...';loopOn=true;
+    const tick=async()=>{
+      if(!loopOn)return;
+      try{const r=await det.detect(v);if(r.length){loopOn=false;navigator.vibrate?.(60);found(r[0].rawValue);return}}catch{}
+      setTimeout(()=>requestAnimationFrame(tick),120);
+    };tick();
+  }catch{$('#scanHint').textContent='Sem acesso à câmera. Permita o uso ou digite o código.'}
+}
+function stopCam(){loopOn=false;stream?.getTracks().forEach(t=>t.stop());stream=null}
+
+/* ---------- identificação automática do produto ---------- */
+async function lookup(code){
+  const own=items.find(i=>i.code==code);if(own)return{name:own.name,src:'já cadastrado'};
+  for(const h of['openfoodfacts','openbeautyfacts','openproductsfacts']){
+    try{
+      const r=await fetch(`https://world.${h}.org/api/v2/product/${code}.json?fields=product_name,brands,quantity`);
+      const j=await r.json();
+      if(j.status===1&&j.product.product_name){const p=j.product;return{name:[p.product_name,p.brands?.split(',')[0],p.quantity].filter(Boolean).join(' - '),src:h}}
+    }catch{}
+  }
+  return null;
+}
+async function found(code){
+  stopCam();openForm();$('#fCode').value=code;
+  $('#nameHint').textContent='Buscando nome do produto...';
+  const r=await lookup(code);
+  if(r){$('#fName').value=r.name;$('#nameHint').textContent='✓ Nome identificado automaticamente';$('#fDate').focus()}
+  else{$('#nameHint').textContent='Produto não encontrado. Digite o nome (ele ficará salvo).';$('#fName').focus()}
+}
+
+/* ---------- formulário ---------- */
+function openForm(it){
+  editId=it?.id||null;view('form');open();
+  $('#fTitle').textContent=it?'Editar produto':'Novo produto';
+  $('#fCode').value=it?.code||'';$('#fName').value=it?.name||'';$('#nameHint').textContent='';
+  $('#fDate').value=it?fmt(new Date(it.date+'T00:00:00')):'';
+  $('#fDel').classList.toggle('hide',!it);
+}
+$('#fDate').oninput=e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);e.target.value=v.replace(/(\d{2})(\d)/,'$1/$2').replace(/(\d{2})\/(\d{2})(\d)/,'$1/$2/$3')};
+$('#fCode').onchange=async e=>{const c=e.target.value.trim();if(c&&!$('#fName').value){const r=await lookup(c);if(r){$('#fName').value=r.name;$('#nameHint').textContent='✓ Nome identificado automaticamente'}}};
+$('#fSave').onclick=async()=>{
+  const code=$('#fCode').value.trim(),name=$('#fName').value.trim(),d=parse($('#fDate').value);
+  if(!name)return toast('Digite o nome do produto');
+  if(!d)return toast('Data inválida. Use dd/mm/aaaa');
+  const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const id=editId||Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  try{await store.save({id,code,name,date:iso});close();toast('Produto salvo ✓')}catch{toast('Erro ao salvar')}
+};
+$('#fDel').onclick=async()=>{if(confirm('Excluir este produto?')){await store.del(editId);close();toast('Excluído')}};
+
+/* ---------- instalar / service worker ---------- */
+let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#install').classList.remove('hide')});
+$('#install').onclick=async()=>{dp?.prompt();dp=null;$('#install').classList.add('hide')};
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+init();
+</script>
+</body></html>
