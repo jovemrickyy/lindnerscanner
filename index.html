@@ -154,6 +154,12 @@ img{-webkit-user-drag:none}
 .anh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;color:var(--mut)}
 .anh .x{padding:0 6px}.an .seg{margin:0}.an .inp{padding:12px 14px;font-size:14px}
 .res h3 small{font-size:12px;color:var(--mut);font-weight:400;margin-left:8px}
+.combo{position:relative}.combo .inp{padding-right:54px}
+.arr{position:absolute;right:6px;top:6px;width:40px;height:40px;border-radius:12px;background:none;color:#fff;display:flex;align-items:center;justify-content:center}
+.arr svg{width:20px;height:20px;transition:transform .4s var(--ease)}.arr.on svg{transform:rotate(180deg)}
+.opts{margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;animation:in .35s var(--ease) both}
+.opt{display:flex;align-items:center;gap:12px;width:100%;padding:10px 14px;background:none;text-align:left;font-size:14px;border-bottom:1px solid var(--line)}
+.opt:last-child{border:0}.opt:active{background:#1a1a1a}
 </style></head><body>
 <div id="splash">
   <div class="sw" id="sw">
@@ -233,8 +239,9 @@ img{-webkit-user-drag:none}
   </div>
   <div id="cOut"></div>
   <label class="lbl">Funcionário que atendeu (aparece no PDF, opcional)</label>
-  <input class="inp" id="cStaff" list="staffList" placeholder="Nome do funcionário" maxlength="40" autocomplete="off">
-  <datalist id="staffList"></datalist>
+  <div class="combo"><input class="inp" id="cStaff" placeholder="Digite ou escolha o funcionário" maxlength="40" autocomplete="off">
+    <button class="arr" id="staffArr" type="button" aria-label="Ver funcionários"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="opts hide" id="staffOpts"></div></div>
   <div class="row"><button class="btn main" id="cPdf">Compartilhar PDF</button></div>
   <div class="row" style="margin-top:8px"><button class="btn" id="cMail">Enviar por e-mail</button></div>
   <div class="row" style="margin-top:8px"><button class="btn" id="cDl">Baixar PDF</button><button class="btn" id="cCopy">Copiar texto</button></div>
@@ -654,8 +661,11 @@ $$('#tab-calc>.seg:not(#spSeg) button').forEach(b=>b.onclick=()=>{cm=b.dataset.m
 $$('#tab-calc input').forEach(i=>i.oninput=calc);
 $$('#spSeg button').forEach(b=>b.onclick=()=>{sp=b.dataset.s;$$('#spSeg button').forEach(x=>x.classList.toggle('on',x==b));const c=sp=='cat';$('#mA').value=c?'0,1':'0,2';$('#mB').value=c?'0,05':'0,1';$('#dMax').dataset.d=c?14:13;$('#dMax').textContent=(c?14:13)+' dias (máx.)';calc()});
 $('#dayChips').onclick=e=>{const c=e.target.closest('.chip');if(c){$('#mD').value=c.dataset.d;calc()}};
-try{$('#cStaff').value=localStorage.lstaff||''}catch{}
-$('#cStaff').oninput=e=>{try{localStorage.lstaff=e.target.value}catch{}};
+try{localStorage.removeItem('lstaff')}catch{}
+function renderStaff(){$('#staffOpts').innerHTML=emps.length?emps.map(e=>`<button class="opt" data-n="${esc(e.name)}">${av(e)}<span>${esc(e.name)}</span></button>`).join(''):'<p class="hint" style="padding:14px;margin:0">Nenhum funcionário cadastrado no checklist ainda.</p>'}
+const staffToggle=open=>{const o=$('#staffOpts'),s=open===undefined?o.classList.contains('hide'):open;o.classList.toggle('hide',!s);$('#staffArr').classList.toggle('on',s)};
+$('#staffArr').onclick=()=>staffToggle();
+$('#staffOpts').onclick=e=>{const b=e.target.closest('.opt');if(b){$('#cStaff').value=b.dataset.n;staffToggle(false)}};
 $('#cPdf').onclick=()=>genPDF('share');$('#cDl').onclick=()=>genPDF('dl');$('#cMail').onclick=()=>genPDF('mail');
 $('#cCopy').onclick=async()=>{if(!summary)return toast('Digite o peso primeiro');try{await navigator.clipboard.writeText(summary);toast('Explicação copiada ✓')}catch{toast('Não foi possível copiar')}};
 /* ---------- Top Gard Plus: vários animais ---------- */
@@ -727,7 +737,7 @@ const SH=['Abertura','Durante o dia','Fechamento'];
 const taskHTML=t=>{const k=isDone(t),e=empOf(t),l=late(t),lt=k&&t.due&&t.doneAt.slice(11,16)>t.due;
   return `<div class="task ${k?'ok':''}" data-id="${t.id}"><button class="tick" data-a="t">${k?'✓':''}</button><div class="t"><h3>${esc(t.text)}</h3><p>${esc(e.name)}${t.due?` • <span class="${l||lt?'lt':''}">até ${t.due}${l?' (atrasada)':''}</span>`:''}${t.daily?' • todo dia':''}${k&&lt?' • fora do horário':''}</p>${logHTML(t)}</div>${k&&t.proof?`<img class="th" src="${t.proof}" data-a="p">`:''}${av(e)}<button class="x" data-a="d">×</button></div>`};
 function renderTasks(){
-  $('#staffList').innerHTML=emps.map(e=>`<option value="${esc(e.name)}">`).join('');
+  renderStaff();
   const cur=$('#tWho').value;
   $('#tWho').innerHTML='<option value="">Equipe (todos)</option>'+emps.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');$('#tWho').value=cur;
   $('#chips').innerHTML=`<button class="chip ${!who?'on':''}" data-w="">Todos</button>`+emps.map(e=>`<button class="chip ${who==e.id?'on':''}" data-w="${e.id}">${av(e)}${esc(e.name)}</button>`).join('')+'<button class="chip" data-w="+">+ Funcionário</button>';
