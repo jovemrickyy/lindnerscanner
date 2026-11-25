@@ -232,6 +232,9 @@ img{-webkit-user-drag:none}
     </details>
   </div>
   <div id="cOut"></div>
+  <label class="lbl">Funcionário que atendeu (aparece no PDF, opcional)</label>
+  <input class="inp" id="cStaff" list="staffList" placeholder="Nome do funcionário" maxlength="40" autocomplete="off">
+  <datalist id="staffList"></datalist>
   <div class="row"><button class="btn main" id="cPdf">Compartilhar PDF</button></div>
   <div class="row" style="margin-top:8px"><button class="btn" id="cDl">Baixar PDF</button><button class="btn" id="cCopy">Copiar texto</button></div>
   <p class="hint" style="margin-top:14px">Cálculo de apoio ao balcão. Confira sempre a bula e a receita do veterinário. Os desenhos dos comprimidos são ilustrativos.</p>
@@ -487,6 +490,10 @@ const dmy=d=>d.toLocaleDateString('pt-BR');
 const cx=n=>n+(n>1?' caixas':' caixa');
 /* ---------- desenho 2D dos comprimidos ---------- */
 const PL={
+ c:{f:{v:[0,0,48,48],d:'M4 24a20 20 0 1 0 40 0a20 20 0 1 0 -40 0Z',s:'M24 4V44M4 24H44',h:'M11 16A14 14 0 0 1 18 10'},
+    h:{v:[1,1,26,46],d:'M24 4A20 20 0 0 0 24 44Z',s:'M4 24H24'},
+    q:{v:[1,1,26,26],d:'M24 24V4A20 20 0 0 0 4 24Z'},
+    t:{v:[0,0,48,48],d:'M24 24V4A20 20 0 1 0 44 24Z',s:'M4 24H24M24 24V44'}},
  r:{f:{v:[0,0,48,48],d:'M4 24a20 20 0 1 0 40 0a20 20 0 1 0 -40 0Z',s:'M24 4V44',h:'M11 16A14 14 0 0 1 18 10'},
     h:{v:[1,1,26,46],d:'M24 4A20 20 0 0 0 24 44Z'},
     q:{v:[1,1,26,26],d:'M24 24V4A20 20 0 0 0 4 24Z'},
@@ -499,7 +506,7 @@ function pills(n,k,sc=1,max=8){
   const w=Math.floor(n),m=+(n%1).toFixed(2),P=PL[k],L=[];
   for(let i=0;i<Math.min(w,max);i++)L.push(P.f);
   if(m)L.push(m<.4?P.q:m<.7?P.h:P.t);
-  return L.map((p,i)=>`<svg class="pill" style="animation-delay:${i*70}ms" width="${p.v[2]*sc}" height="${p.v[3]*sc}" viewBox="${p.v.join(' ')}"><path d="${p.d}"/>${p.s?`<path d="${p.s}" class="sc"/><path d="${p.h}" class="sh"/>`:''}</svg>`).join('')+(w>max?`<span class="more">+${w-max}</span>`:'');
+  return L.map((p,i)=>`<svg class="pill" style="animation-delay:${i*70}ms" width="${p.v[2]*sc}" height="${p.v[3]*sc}" viewBox="${p.v.join(' ')}"><path d="${p.d}"/>${p.s?`<path d="${p.s}" class="sc"/>`:''}${p.h?`<path d="${p.h}" class="sh"/>`:''}</svg>`).join('')+(w>max?`<span class="more">+${w-max}</span>`:'');
 }
 
 /*PDF-START*/
@@ -514,7 +521,7 @@ const svg2png=p=>new Promise(res=>{
   im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
 });
 const pillImgs=async(n,k)=>{const w=Math.floor(n),m=+(n%1).toFixed(2),P=PL[k],L=[];for(let i=0;i<Math.min(w,8);i++)L.push(P.f);if(m)L.push(m<.4?P.q:m<.7?P.h:P.t);return{imgs:(await Promise.all(L.map(svg2png))).filter(Boolean),more:w>8?w-8:0}};
-const logoData=()=>new Promise(res=>{const im=new Image();im.onload=()=>{try{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);res(c.toDataURL('image/png'))}catch{res(null)}};im.onerror=()=>res(null);im.src=document.querySelector('header img').src});
+const logoData=()=>new Promise(res=>{const im=new Image();im.onload=()=>{try{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext('2d');x.drawImage(im,0,0);x.globalCompositeOperation='source-in';x.fillStyle='#000';x.fillRect(0,0,c.width,c.height);res(c.toDataURL('image/png'))}catch{res(null)}};im.onerror=()=>res(null);im.src=document.querySelector('header img').src});
 const IMG={logo:logoData,pill:pillImgs};
 async function buildPDF(r){
   const{jsPDF}=window.jspdf,d=new jsPDF({unit:'mm',format:'a4'}),W=210,M=14,CW=W-2*M;
@@ -522,17 +529,20 @@ async function buildPDF(r){
   const stamp=now.toLocaleDateString('pt-BR')+' às '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   let y=0;
   const head=first=>{
-    const hh=first?38:20;d.setFillColor(0,0,0);d.rect(0,0,W,hh,'F');
+    const hh=first?38:20;
     if(first){
-      if(logo)d.addImage(logo,'PNG',M,7,24,24);
-      d.setTextColor(255,255,255);d.setFont('helvetica','bold');d.setFontSize(19);d.text('Relatório de dosagem',M+30,19);
-      d.setFont('helvetica','normal');d.setFontSize(10);d.setTextColor(185,185,185);d.text('Lindner Agrostore  |  Pet Shop',M+30,26);
-      d.setFontSize(9);d.text('Emitido em '+stamp,W-M,19,{align:'right'});
+      if(logo)d.addImage(logo,'PNG',M,6,24,24,'logo','FAST');
+      d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(19);d.text('Relatório de dosagem',M+30,16);
+      d.setFont('helvetica','normal');d.setFontSize(10);d.setTextColor(90,90,90);d.text('Lindner Agrostore  |  Pet Shop',M+30,22.5);
+      if(r.staff){d.setFontSize(9.5);d.setTextColor(0,0,0);d.text('Atendido por: '+String(r.staff).slice(0,40),M+30,28.5)}
+      d.setFontSize(9);d.setTextColor(90,90,90);d.text('Emitido em '+stamp,W-M,16,{align:'right'});
+      d.setFontSize(8.3);d.text(d.splitTextToSize('FILIAL 3, Estrada João de Oliveira Remião 2813 (PDA7)',80),W-M,21.5,{align:'right'});
     }else{
-      if(logo)d.addImage(logo,'PNG',M,3.5,13,13);
-      d.setTextColor(255,255,255);d.setFont('helvetica','bold');d.setFontSize(11);d.text('Relatório de dosagem',M+17,12.5);
+      if(logo)d.addImage(logo,'PNG',M,5,11,11,'logo','FAST');
+      d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(11);d.text('Relatório de dosagem',M+15,12.5);
     }
-    y=hh+13;
+    d.setDrawColor(0,0,0);d.setLineWidth(.45);d.line(M,hh-1,W-M,hh-1);
+    y=hh+12;
   };
   const need=h=>{if(y+h>276){d.addPage();head(false)}};
   head(true);
@@ -563,10 +573,10 @@ async function buildPDF(r){
   d.setFont('helvetica','bold');d.setFontSize(10);
   const T=r.totals.map(([k,v])=>({k,v:d.splitTextToSize(String(v),CW-72)}));
   const th=16+T.reduce((s,t)=>s+t.v.length*4.8+3.4,0);need(th+4);
-  d.setFillColor(0,0,0);d.roundedRect(M,y,CW,th,3.5,3.5,'F');
-  d.setTextColor(255,255,255);d.setFont('helvetica','bold');d.setFontSize(12);d.text(r.totalsTitle||'Resumo para levar',M+7,y+10);
+  d.setDrawColor(0,0,0);d.setLineWidth(.35);d.roundedRect(M,y,CW,th,3.5,3.5,'S');
+  d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(12);d.text(r.totalsTitle||'Resumo para levar',M+7,y+10);
   let ty=y+18;
-  T.forEach(t=>{d.setFont('helvetica','normal');d.setFontSize(9);d.setTextColor(170,170,170);d.text(t.k,M+7,ty);d.setFont('helvetica','bold');d.setFontSize(10);d.setTextColor(255,255,255);d.text(t.v,M+65,ty);ty+=t.v.length*4.8+3.4});
+  T.forEach(t=>{d.setFont('helvetica','normal');d.setFontSize(9);d.setTextColor(110,110,110);d.text(t.k,M+7,ty);d.setFont('helvetica','bold');d.setFontSize(10);d.setTextColor(0,0,0);d.text(t.v,M+65,ty);ty+=t.v.length*4.8+3.4});
   y+=th+9;
   if(r.notes&&r.notes.length){
     need(12);d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(10);d.text('Observações',M,y);y+=5.5;
@@ -587,6 +597,7 @@ async function genPDF(mode){
   toast('Gerando PDF...');
   try{
     await loadPdf();
+    report.staff=$('#cStaff').value.trim();
     const blob=await buildPDF(report);
     const name='Lindner-'+(report.id=='top'?'TopGardPlus':'MellisVet')+'-'+today()+'.pdf';
     const file=new File([blob],name,{type:'application/pdf'});
@@ -634,6 +645,8 @@ $$('#tab-calc>.seg:not(#spSeg) button').forEach(b=>b.onclick=()=>{cm=b.dataset.m
 $$('#tab-calc input').forEach(i=>i.oninput=calc);
 $$('#spSeg button').forEach(b=>b.onclick=()=>{sp=b.dataset.s;$$('#spSeg button').forEach(x=>x.classList.toggle('on',x==b));const c=sp=='cat';$('#mA').value=c?'0,1':'0,2';$('#mB').value=c?'0,05':'0,1';$('#dMax').dataset.d=c?14:13;$('#dMax').textContent=(c?14:13)+' dias (máx.)';calc()});
 $('#dayChips').onclick=e=>{const c=e.target.closest('.chip');if(c){$('#mD').value=c.dataset.d;calc()}};
+try{$('#cStaff').value=localStorage.lstaff||''}catch{}
+$('#cStaff').oninput=e=>{try{localStorage.lstaff=e.target.value}catch{}};
 $('#cPdf').onclick=()=>genPDF('share');$('#cDl').onclick=()=>genPDF('dl');
 $('#cCopy').onclick=async()=>{if(!summary)return toast('Digite o peso primeiro');try{await navigator.clipboard.writeText(summary);toast('Explicação copiada ✓')}catch{toast('Não foi possível copiar')}};
 /* ---------- Top Gard Plus: vários animais ---------- */
@@ -654,8 +667,8 @@ function calcTop(){
     const cat=a.sp=='cat',t=cat?Math.ceil(w/2)/4:(kg==10&&w<=10?(w<=2?.25:w<=5?.5:1):Math.ceil(w/kg*2)/2);
     tot+=t*n;
     const nm=a.name.trim(),lab=(cat?'Gato':'Cachorro')+' - '+nf(w)+' kg';
-    h+=`<div class="res"><h3><span>${nm?esc(nm)+'<small>'+lab+'</small>':lab}</span></h3><div class="hd" style="margin-top:8px"><div><div class="big">${pl(t)}</div><p style="margin-top:2px">por vez</p></div><div class="pills">${pills(t,'o',1.1)}</div></div><div class="steps">${ds.map(x=>`<div class="st"><b>${x[0]}<br><small style="color:var(--mut);font-weight:400">${x[1]}</small></b><span class="sp"><span class="pills">${pills(t,'o',.55,6)}</span><b style="color:#fff">${pl(t)}</b></span></div>`).join('')}</div></div>`;
-    R.push({title:nm||lab,sub:nm?lab:'',rows:ds.map(x=>({l:x[0],sub:x[1],n:t,k:'o'}))});
+    h+=`<div class="res"><h3><span>${nm?esc(nm)+'<small>'+lab+'</small>':lab}</span></h3><div class="hd" style="margin-top:8px"><div><div class="big">${pl(t)}</div><p style="margin-top:2px">por vez</p></div><div class="pills">${pills(t,'c',1.1)}</div></div><div class="steps">${ds.map(x=>`<div class="st"><b>${x[0]}<br><small style="color:var(--mut);font-weight:400">${x[1]}</small></b><span class="sp"><span class="pills">${pills(t,'c',.55,6)}</span><b style="color:#fff">${pl(t)}</b></span></div>`).join('')}</div></div>`;
+    R.push({title:nm||lab,sub:nm?lab:'',rows:ds.map(x=>({l:x[0],sub:x[1],n:t,k:'c'}))});
     txt+='\n'+(nm?nm+' ('+lab+')':lab)+': '+pl(t)+' por vez\n'+ds.map(x=>'- '+x[0]+' ('+x[1]+')').join('\n')+'\n';
   });
   const bx=Math.ceil(tot/box),left=bx*box-tot;
@@ -705,6 +718,7 @@ const SH=['Abertura','Durante o dia','Fechamento'];
 const taskHTML=t=>{const k=isDone(t),e=empOf(t),l=late(t),lt=k&&t.due&&t.doneAt.slice(11,16)>t.due;
   return `<div class="task ${k?'ok':''}" data-id="${t.id}"><button class="tick" data-a="t">${k?'✓':''}</button><div class="t"><h3>${esc(t.text)}</h3><p>${esc(e.name)}${t.due?` • <span class="${l||lt?'lt':''}">até ${t.due}${l?' (atrasada)':''}</span>`:''}${t.daily?' • todo dia':''}${k&&lt?' • fora do horário':''}</p>${logHTML(t)}</div>${k&&t.proof?`<img class="th" src="${t.proof}" data-a="p">`:''}${av(e)}<button class="x" data-a="d">×</button></div>`};
 function renderTasks(){
+  $('#staffList').innerHTML=emps.map(e=>`<option value="${esc(e.name)}">`).join('');
   const cur=$('#tWho').value;
   $('#tWho').innerHTML='<option value="">Equipe (todos)</option>'+emps.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');$('#tWho').value=cur;
   $('#chips').innerHTML=`<button class="chip ${!who?'on':''}" data-w="">Todos</button>`+emps.map(e=>`<button class="chip ${who==e.id?'on':''}" data-w="${e.id}">${av(e)}${esc(e.name)}</button>`).join('')+'<button class="chip" data-w="+">+ Funcionário</button>';

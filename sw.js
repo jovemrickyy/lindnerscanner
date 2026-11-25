@@ -1,4 +1,4 @@
-const C='lindner-v18';
+const C='lindner-v20';
 const A=['./','./index.html','./logo.png','./manifest.json','./icon-192.png','./icon-512.png','./firebase-config.js','./jspdf.umd.min.js'];
 self.addEventListener('install',e=>{
   // cada arquivo é guardado separadamente: se algum faltar, a instalação NÃO falha
