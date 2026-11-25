@@ -198,7 +198,7 @@ img{-webkit-user-drag:none}
   </div>
   <div id="vForm" class="hide">
     <h2 id="fTitle">Novo produto</h2>
-    <div class="pp"><div class="proof" id="pPrev">Sem foto</div><div class="col"><button class="btn" id="pPhoto">Adicionar foto do produto</button><button class="ghost hide" id="pDel">Remover foto</button></div></div>
+    <div class="pp"><div class="proof" id="pPrev">Sem foto</div><div class="col"><div class="row" style="margin:0"><button class="btn" id="pCam">Tirar foto</button><button class="btn" id="pPhoto">Galeria</button></div><button class="ghost hide" id="pDel">Remover foto</button></div></div>
     <label class="lbl">Código de barras</label>
     <input class="inp" id="fCode" inputmode="numeric" placeholder="7891000100103">
     <label class="lbl">Nome do produto</label>
@@ -214,7 +214,7 @@ img{-webkit-user-drag:none}
   </div>
   <div id="vEmp" class="hide">
     <h2>Funcionário</h2>
-    <div class="pv"><div id="ePrev"></div><button class="btn" id="ePhoto">Escolher foto</button></div>
+    <div class="pv"><div id="ePrev"></div><div style="flex:1;display:flex;flex-direction:column;gap:8px"><button class="btn" id="eCam">Tirar foto</button><button class="btn" id="ePhoto">Galeria</button></div></div>
     <label class="lbl">Nome</label><input class="inp" id="eName" placeholder="Nome do funcionário">
     <label class="lbl">Cor do perfil</label><div class="colors" id="eColors"></div>
     <div class="row"><button class="btn del hide" id="eDel">Excluir</button><button class="btn main" id="eSave">Salvar</button></div>
@@ -223,7 +223,7 @@ img{-webkit-user-drag:none}
     <h2 id="dTitle">Concluir tarefa</h2>
     <p class="hint" id="dSub"></p>
     <div class="proof" id="dPrev">Nenhuma foto</div>
-    <div class="row" style="margin-top:0"><button class="btn" id="dPhoto">Adicionar foto da tarefa feita</button></div>
+    <div class="row" style="margin-top:0"><button class="btn" id="dCam">Tirar foto</button><button class="btn" id="dPhoto">Galeria</button></div>
     <div class="row"><button class="btn" id="dCancel">Cancelar</button><button class="btn main" id="dOk">Concluir</button></div>
   </div>
 </div>
@@ -235,7 +235,7 @@ img{-webkit-user-drag:none}
   <p class="hint" id="lErr" style="color:var(--red)"></p>
   <div class="row"><button class="btn main" id="lGo">Entrar</button></div>
 </form>
-<input type="file" accept="image/*" id="fProd" hidden><input type="file" accept="image/*" id="fAvatar" hidden><input type="file" accept="image/*" id="fProof" hidden>
+<input type="file" accept="image/*" capture="environment" id="fProdCam" hidden><input type="file" accept="image/*" capture="user" id="fAvatarCam" hidden><input type="file" accept="image/*" capture="environment" id="fProofCam" hidden><input type="file" accept="image/*" id="fProd" hidden><input type="file" accept="image/*" id="fAvatar" hidden><input type="file" accept="image/*" id="fProof" hidden>
 <div id="viewer" class="hide"><img id="vImg"></div>
 <div id="dlg" class="hide"><div class="box"><p id="dMsg"></p><div class="row"><button class="btn" id="dNo">Cancelar</button><button class="btn main" id="dYes">Excluir</button></div></div></div>
 <div class="toast" id="toast"></div>
@@ -353,9 +353,10 @@ async function found(code){
 
 /* ---------- formulário ---------- */
 let pPhoto='';
-function drawP(){$('#pPrev').innerHTML=pPhoto?`<img src="${pPhoto}">`:'Sem foto';$('#pDel').classList.toggle('hide',!pPhoto);$('#pPhoto').textContent=pPhoto?'Trocar foto':'Adicionar foto do produto'}
+function drawP(){$('#pPrev').innerHTML=pPhoto?`<img src="${pPhoto}">`:'Sem foto';$('#pDel').classList.toggle('hide',!pPhoto)}
 $('#pPhoto').onclick=()=>$('#fProd').click();
-$('#fProd').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f){pPhoto=await shrink(f,600,.7);drawP()}};
+$('#pCam').onclick=()=>$('#fProdCam').click();
+$('#fProd').onchange=$('#fProdCam').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f){pPhoto=await shrink(f,600,.7);drawP()}};
 $('#pDel').onclick=()=>{pPhoto='';drawP()};
 function openForm(it){
   editId=it?.id||null;view('form');open();
@@ -450,7 +451,8 @@ function openEmp(e){eId=e?.id||null;ePhoto=e?.photo||'';eColor=e?.color||COLORS[
 $('#eName').oninput=drawEmp;
 $('#eColors').onclick=e=>{const b=e.target.closest('.sw');if(b){eColor=b.dataset.c;drawEmp()}};
 $('#ePhoto').onclick=()=>$('#fAvatar').click();
-$('#fAvatar').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f){ePhoto=await shrink(f,220);drawEmp()}};
+$('#eCam').onclick=()=>$('#fAvatarCam').click();
+$('#fAvatar').onchange=$('#fAvatarCam').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f){ePhoto=await shrink(f,220);drawEmp()}};
 $('#eSave').onclick=async()=>{const name=$('#eName').value.trim();if(!name)return toast('Digite o nome');await store.save({id:eId||uid(),name,color:eColor,photo:ePhoto},'funcionarios');close();toast('Funcionário salvo ✓')};
 $('#eDel').onclick=async()=>{if(!await ask('Excluir este funcionário?'))return;for(const t of tasks.filter(t=>t.who==eId))await store.save({...t,who:''},'tarefas');await store.del(eId,'funcionarios');if(who==eId)who=null;close()};
 $('#eEdit').onclick=()=>openEmp(emps.find(e=>e.id==who));
@@ -484,7 +486,8 @@ $('#tAdd').onclick=async()=>{
 let dId=null,dProof='';
 function openDone(t){dId=t.id;dProof='';$('#dTitle').textContent=t.text;$('#dSub').textContent=empOf(t).name+(t.due?` • até ${t.due}`:'');$('#dPrev').textContent='Nenhuma foto';view('done');open()}
 $('#dPhoto').onclick=()=>$('#fProof').click();
-$('#fProof').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f){dProof=await shrink(f,900,.7);$('#dPrev').innerHTML=`<img src="${dProof}">`}};
+$('#dCam').onclick=()=>$('#fProofCam').click();
+$('#fProof').onchange=$('#fProofCam').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f){dProof=await shrink(f,900,.7);$('#dPrev').innerHTML=`<img src="${dProof}">`}};
 $('#dCancel').onclick=close;
 $('#dOk').onclick=async()=>{const t=tasks.find(x=>x.id==dId);if(!t)return;navigator.vibrate?.(40);await store.save({...t,doneAt:new Date().toLocaleString('sv'),proof:dProof},'tarefas');close();toast('Tarefa concluída ✓')};
 $('#viewer').onclick=()=>$('#viewer').classList.add('hide');
