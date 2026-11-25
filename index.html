@@ -236,6 +236,7 @@ img{-webkit-user-drag:none}
   <input class="inp" id="cStaff" list="staffList" placeholder="Nome do funcionário" maxlength="40" autocomplete="off">
   <datalist id="staffList"></datalist>
   <div class="row"><button class="btn main" id="cPdf">Compartilhar PDF</button></div>
+  <div class="row" style="margin-top:8px"><button class="btn" id="cMail">Enviar por e-mail</button></div>
   <div class="row" style="margin-top:8px"><button class="btn" id="cDl">Baixar PDF</button><button class="btn" id="cCopy">Copiar texto</button></div>
   <p class="hint" style="margin-top:14px">Cálculo de apoio ao balcão. Confira sempre a bula e a receita do veterinário. Os desenhos dos comprimidos são ilustrativos.</p>
 </section>
@@ -592,6 +593,7 @@ async function buildPDF(r){
   }
   return d.output('blob');
 }
+const mailMsg=()=>'CHEGOU SEU RELATÓRIO DE DOSAGEM DA LINDNER AGROSTORE: '+report.title.toUpperCase()+'\n\nATENÇÃO!!! NÃO substitui a orientação do médico-veterinário.';
 async function genPDF(mode){
   if(!report)return toast('Digite o peso primeiro');
   toast('Gerando PDF...');
@@ -602,9 +604,16 @@ async function genPDF(mode){
     const name='Lindner-'+(report.id=='top'?'TopGardPlus':'MellisVet')+'-'+today()+'.pdf';
     const file=new File([blob],name,{type:'application/pdf'});
     if(mode=='share'&&navigator.canShare&&navigator.canShare({files:[file]})){
-      try{await navigator.share({files:[file],title:'Relatório de dosagem - Lindner'});return}catch(e){if(e&&e.name=='AbortError')return}
+      try{await navigator.share({files:[file],title:'Relatório de dosagem - Lindner',text:mailMsg()});return}catch(e){if(e&&e.name=='AbortError')return}
     }
     const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),20000);
+    if(mode=='mail'){
+      const m=document.createElement('a');
+      m.href='mailto:?subject='+encodeURIComponent('Relatório de dosagem - Lindner Agrostore - '+report.title)+'&body='+encodeURIComponent(mailMsg().replace(/\n/g,'\r\n'));
+      toast('PDF salvo. Anexe no e-mail');
+      setTimeout(()=>{document.body.appendChild(m);m.click();m.remove()},600);
+      return;
+    }
     toast('PDF pronto ✓');
   }catch(e){toast('Não foi possível gerar o PDF')}
 }
@@ -647,7 +656,7 @@ $$('#spSeg button').forEach(b=>b.onclick=()=>{sp=b.dataset.s;$$('#spSeg button')
 $('#dayChips').onclick=e=>{const c=e.target.closest('.chip');if(c){$('#mD').value=c.dataset.d;calc()}};
 try{$('#cStaff').value=localStorage.lstaff||''}catch{}
 $('#cStaff').oninput=e=>{try{localStorage.lstaff=e.target.value}catch{}};
-$('#cPdf').onclick=()=>genPDF('share');$('#cDl').onclick=()=>genPDF('dl');
+$('#cPdf').onclick=()=>genPDF('share');$('#cDl').onclick=()=>genPDF('dl');$('#cMail').onclick=()=>genPDF('mail');
 $('#cCopy').onclick=async()=>{if(!summary)return toast('Digite o peso primeiro');try{await navigator.clipboard.writeText(summary);toast('Explicação copiada ✓')}catch{toast('Não foi possível copiar')}};
 /* ---------- Top Gard Plus: vários animais ---------- */
 const animals=[{name:'',sp:'dog',w:''}];
