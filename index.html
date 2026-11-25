@@ -4,9 +4,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>Lindner Scanner</title>
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -145,7 +145,7 @@ img{-webkit-user-drag:none}
 #splash.done #sAut{opacity:1;transform:none}
 #splash .skip{display:block;margin-top:28px;font-size:11px;color:#555}
 #pdlg{z-index:61}
-.pw{color:transparent;text-shadow:0 0 7px #fff;caret-color:#fff;text-align:center;letter-spacing:4px;font-size:22px;margin-top:14px;-webkit-user-select:text;user-select:text}
+.pw{-webkit-text-security:disc;color:transparent;text-shadow:0 0 7px #fff;caret-color:#fff;text-align:center;letter-spacing:4px;font-size:22px;margin-top:14px;-webkit-user-select:text;user-select:text}
 .pw::placeholder{color:#555;text-shadow:none;letter-spacing:0;font-size:14px}
 .shake{animation:shake .4s}@keyframes shake{20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
 #pErr{min-height:20px;text-align:center;margin-top:8px}
@@ -299,16 +299,16 @@ img{-webkit-user-drag:none}
   </div>
 </div>
 
-<form id="login" onsubmit="return false">
+<div id="login">
   <img src="logo.png" alt="">
-  <label class="lbl">E-mail</label><input class="inp" id="lMail" type="email" autocomplete="username">
-  <label class="lbl">Senha</label><input class="inp" id="lPass" type="password" autocomplete="current-password">
+  <label class="lbl">E-mail</label><input class="inp" id="lMail" type="text" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore>
+  <label class="lbl">Senha</label><input class="inp pw" id="lPass" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore placeholder="Senha">
   <p class="hint" id="lErr" style="color:var(--red)"></p>
   <div class="row"><button class="btn main" id="lGo">Entrar</button></div>
-</form>
+</div>
 <input type="file" accept="image/*" capture="environment" id="fProdCam" hidden><input type="file" accept="image/*" capture="user" id="fAvatarCam" hidden><input type="file" accept="image/*" capture="environment" id="fProofCam" hidden><input type="file" accept="image/*" id="fProd" hidden><input type="file" accept="image/*" id="fAvatar" hidden><input type="file" accept="image/*" id="fProof" hidden>
 <div id="viewer" class="hide"><img id="vImg"></div>
-<div id="pdlg" class="hide"><div class="box"><p id="pMsg"></p><input class="inp pw" id="pIn" type="password" autocomplete="new-password" autocapitalize="off" placeholder="Digite a senha"><p class="hint lt" id="pErr"></p><div class="row" style="margin-top:8px"><button class="btn" id="pNo">Cancelar</button><button class="btn main" id="pYes">Confirmar</button></div></div></div>
+<div id="pdlg" class="hide"><div class="box"><p id="pMsg"></p><input class="inp pw" id="pIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore placeholder="Digite a senha"><p class="hint lt" id="pErr"></p><div class="row" style="margin-top:8px"><button class="btn" id="pNo">Cancelar</button><button class="btn main" id="pYes">Confirmar</button></div></div></div>
 <div id="dlg" class="hide"><div class="box"><p id="dMsg"></p><div class="row"><button class="btn" id="dNo">Cancelar</button><button class="btn main" id="dYes">Excluir</button></div></div></div>
 <div class="toast" id="toast"></div>
 
