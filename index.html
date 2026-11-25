@@ -64,6 +64,64 @@ main{padding:16px;max-width:640px;margin:auto}
 #login{position:fixed;inset:0;z-index:40;background:#000;display:none;flex-direction:column;justify-content:center;padding:30px;gap:4px}
 #login.on{display:flex}#login img{width:110px;margin:0 auto 20px}
 .hide{display:none!important}
+
+body{padding-bottom:170px}
+main section{animation:in .5s var(--ease) both}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:7;display:flex;gap:6px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:rgba(0,0,0,.92);backdrop-filter:blur(16px);border-top:1px solid var(--line);max-width:640px;margin:auto}
+nav button{flex:1;background:none;color:var(--mut);padding:9px 4px;border-radius:14px;font-size:11px;font-weight:500;display:flex;flex-direction:column;gap:3px;align-items:center}
+nav button.on{background:#1a1a1a;color:#fff}nav svg{width:22px;height:22px}
+.fab{bottom:calc(84px + env(safe-area-inset-bottom))}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:4px;margin-bottom:6px}
+.seg button{flex:1;padding:11px;border-radius:12px;background:none;font-size:13px;font-weight:500;color:var(--mut)}
+.seg button.on{background:#fff;color:#000}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.res{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-top:12px;animation:in .5s var(--ease) both}
+.res.best{border-color:#fff}
+.res h3{font-size:15px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.res h3 em{font-style:normal;font-size:10px;background:#fff;color:#000;border-radius:99px;padding:3px 10px}
+.res p{font-size:13px;color:#cfcfcf;margin-top:8px;line-height:1.6}.res p b{color:#fff}
+.big{font-size:34px;font-weight:700;margin-top:4px}
+.prog{height:8px;background:#1a1a1a;border-radius:8px;overflow:hidden}.prog div{height:100%;background:#fff;width:0;transition:width .7s var(--ease)}
+.chips{display:flex;gap:8px;overflow-x:auto;margin:12px 0;padding-bottom:4px}
+.chip{flex-shrink:0;background:#151515;border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-size:13px;color:var(--mut)}
+.chip.on{background:#fff;color:#000;border-color:#fff}
+.task{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 8px 12px 14px;margin-bottom:8px;animation:in .5s var(--ease) both}
+.tick{width:30px;height:30px;flex-shrink:0;border-radius:50%;border:2px solid #444;background:none;font-size:16px;font-weight:700;color:#000}
+.task.ok .tick{background:#fff;border-color:#fff}.task.ok h3{text-decoration:line-through;color:var(--mut)}
+.task .t{flex:1;min-width:0}.task h3{font-size:14px;font-weight:500}.task p{font-size:11px;color:var(--mut);margin-top:2px}
+.x{background:none;color:var(--mut);font-size:24px;padding:4px 12px}
+.sh{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin:20px 0 8px}
+.cb{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--mut);margin:12px 0}.cb input{width:18px;height:18px;accent-color:#fff}
+select.inp{appearance:none}
+html{color-scheme:dark}
+select.inp option{background:#111}
+.adv{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.adv summary{font-size:13px;color:var(--mut);cursor:pointer}
+.steps{margin:12px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.st{display:flex;justify-content:space-between;gap:10px;padding:11px 14px;font-size:13px;border-bottom:1px solid var(--line)}
+.st:last-child{border:0}.st b{font-weight:500;color:#fff}.st span{color:#cfcfcf;text-align:right}
+.res p.keep{background:#171717;border-radius:12px;padding:10px 12px}
+.av{width:34px;height:34px;border-radius:50%;border:3px solid var(--c);background:var(--c);color:#000;display:inline-flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;overflow:hidden;flex-shrink:0}
+.av img{width:100%;height:100%;object-fit:cover}.av.lg{width:96px;height:96px;font-size:36px;border-width:4px}
+.chip{display:flex;align-items:center;gap:8px}.chip .av{width:26px;height:26px;font-size:11px;border-width:2px}.chip.on .av{border-color:#000}
+.colors{display:flex;gap:14px;flex-wrap:wrap;padding:8px 4px}
+.sw{width:34px;height:34px;border-radius:50%}.sw.on{outline:2px solid #fff;outline-offset:3px}
+.pv{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.proof{aspect-ratio:4/3;border-radius:20px;background:#151515;border:1px dashed #333;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:13px;overflow:hidden;margin:10px 0}
+.proof img{width:100%;height:100%;object-fit:cover}
+.th{width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0}
+.lt{color:var(--red)}
+#viewer{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;padding:16px}
+#viewer img{max-width:100%;max-height:100%;border-radius:16px}
+#dlg{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:24px;animation:in .3s var(--ease)}
+#dlg .box{background:#111;border:1px solid var(--line);border-radius:24px;padding:22px;width:100%;max-width:340px}
+#dlg p{font-size:15px;font-weight:500;text-align:center}
+.x{padding:8px 14px}
+.pp{display:flex;gap:14px;align-items:center;margin-bottom:4px}.pp .proof{width:84px;height:84px;aspect-ratio:auto;margin:0;flex-shrink:0;border-radius:16px}.pp .col{flex:1;display:flex;flex-direction:column;gap:8px}.item .th{width:46px;height:46px;border-radius:12px}
+#infoB{font-size:13px;color:#cfcfcf;line-height:1.6;margin-top:10px}#infoB b{color:#fff;font-weight:500}#infoB ul{padding-left:18px;margin:8px 0}#infoB li{margin:6px 0}
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,select{-webkit-user-select:text;user-select:text}
+img{-webkit-user-drag:none}
 </style></head><body>
 <header>
   <img src="logo.png" alt="Lindner">
@@ -71,14 +129,62 @@ main{padding:16px;max-width:640px;margin:auto}
   <button class="ghost hide" id="install">Instalar</button>
 </header>
 <main>
+<section id="tab-val">
   <div class="stats">
     <div class="stat" data-f="red"><i style="background:var(--red)"></i><b id="nr">0</b><span>até 1 mês</span></div>
     <div class="stat" data-f="yel"><i style="background:var(--yel)"></i><b id="ny">0</b><span>até 3 meses</span></div>
     <div class="stat" data-f="blue"><i style="background:var(--blue)"></i><b id="nb">0</b><span>longe</span></div>
   </div>
   <input class="search" id="q" placeholder="Buscar produto ou código" autocomplete="off">
-  <div id="list"></div>
+  <div id="list"></div></section>
+
+<section id="tab-calc" class="hide">
+  <div class="seg"><button class="on" data-m="top">Top Gard Plus</button><button data-m="mel">Meloxicam</button></div>
+  <div class="seg" id="spSeg" style="margin-top:12px"><button class="on" data-s="dog">Cachorro</button><button data-s="cat">Gato</button></div>
+  <details class="adv" id="info" open><summary id="infoT" style="color:#fff;font-weight:500"></summary><div id="infoB"></div></details>
+  <label class="lbl">Quanto o animal pesa? (kg)</label>
+  <input class="inp" id="cW" inputmode="decimal" placeholder="Ex: 10">
+  <div id="cTop">
+    <details class="adv"><summary>Ajustes do Top Gard Plus</summary>
+      <div class="two"><div><label class="lbl">1 comprimido serve para quantos kg?</label><input class="inp" id="tKg" inputmode="decimal" value="10"></div>
+      <div><label class="lbl">Comprimidos na caixa</label><input class="inp" id="tBox" inputmode="numeric" value="4"></div></div>
+      <div class="two"><div><label class="lbl">Quantas vezes dar</label><input class="inp" id="tN" inputmode="numeric" value="2"></div>
+      <div><label class="lbl">A cada quantos dias</label><input class="inp" id="tGap" inputmode="numeric" value="15"></div></div>
+    </details>
+  </div>
+  <div id="cMel" class="hide">
+    <label class="lbl">Por quantos dias vai tratar?</label>
+    <div class="chips" id="dayChips"><button class="chip" data-d="3">3 dias</button><button class="chip on" data-d="5">5 dias</button><button class="chip" data-d="7">7 dias</button><button class="chip" data-d="10">10 dias</button><button class="chip" id="dMax" data-d="13">13 dias (máx.)</button></div>
+    <input class="inp" id="mD" inputmode="numeric" value="5" placeholder="Outro número de dias">
+    <details class="adv"><summary>Ajustes (dose e caixa)</summary>
+      <div class="two"><div><label class="lbl">Dose do 1º dia (mg por kg)</label><input class="inp" id="mA" inputmode="decimal" value="0,2"></div>
+      <div><label class="lbl">Dose dos outros dias (mg por kg)</label><input class="inp" id="mB" inputmode="decimal" value="0,1"></div></div>
+      <label class="lbl">Comprimidos na caixa</label><input class="inp" id="mBox" inputmode="numeric" value="10">
+    </details>
+  </div>
+  <div id="cOut"></div>
+  <div class="row"><button class="btn main" id="cCopy">Copiar explicação para o cliente</button></div>
+  <p class="hint" style="margin-top:14px">Cálculo de apoio ao balcão. Confira sempre a bula e a receita do veterinário.</p>
+</section>
+
+<section id="tab-chk" class="hide">
+  <div class="prog"><div id="pBar"></div></div>
+  <p class="hint" id="pTxt"></p>
+  <div class="chips" id="chips"></div>
+  <button class="ghost hide" id="eEdit" style="margin-bottom:12px">Editar funcionário</button>
+  <input class="inp" id="tTxt" placeholder="O que o funcionário deve fazer?">
+  <div class="two" style="margin-top:10px"><select class="inp" id="tWho"></select><select class="inp" id="tShift"><option>Abertura</option><option selected>Durante o dia</option><option>Fechamento</option></select></div>
+  <div class="two"><div><label class="lbl">Terminar até (horário)</label><input type="time" class="inp" id="tDue"></div>
+  <label class="cb" style="margin-top:34px"><input type="checkbox" id="tDaily" checked> Repete todo dia</label></div>
+  <div class="row" style="margin-top:8px"><button class="btn main" id="tAdd">Adicionar tarefa</button></div>
+  <div id="tList"></div>
+</section>
 </main>
+<nav>
+  <button class="on" data-t="val"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Validades</button>
+  <button data-t="calc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2"/></svg>Calculadora</button>
+  <button data-t="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Checklist</button>
+</nav>
 <button class="fab" id="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3M4 12h16"/></svg>Escanear</button>
 
 <div class="sheet-bg" id="bg"></div>
@@ -92,6 +198,7 @@ main{padding:16px;max-width:640px;margin:auto}
   </div>
   <div id="vForm" class="hide">
     <h2 id="fTitle">Novo produto</h2>
+    <div class="pp"><div class="proof" id="pPrev">Sem foto</div><div class="col"><button class="btn" id="pPhoto">Adicionar foto do produto</button><button class="ghost hide" id="pDel">Remover foto</button></div></div>
     <label class="lbl">Código de barras</label>
     <input class="inp" id="fCode" inputmode="numeric" placeholder="7891000100103">
     <label class="lbl">Nome do produto</label>
@@ -105,6 +212,20 @@ main{padding:16px;max-width:640px;margin:auto}
       <button class="btn main" id="fSave">Salvar</button>
     </div>
   </div>
+  <div id="vEmp" class="hide">
+    <h2>Funcionário</h2>
+    <div class="pv"><div id="ePrev"></div><button class="btn" id="ePhoto">Escolher foto</button></div>
+    <label class="lbl">Nome</label><input class="inp" id="eName" placeholder="Nome do funcionário">
+    <label class="lbl">Cor do perfil</label><div class="colors" id="eColors"></div>
+    <div class="row"><button class="btn del hide" id="eDel">Excluir</button><button class="btn main" id="eSave">Salvar</button></div>
+  </div>
+  <div id="vDone" class="hide">
+    <h2 id="dTitle">Concluir tarefa</h2>
+    <p class="hint" id="dSub"></p>
+    <div class="proof" id="dPrev">Nenhuma foto</div>
+    <div class="row" style="margin-top:0"><button class="btn" id="dPhoto">Adicionar foto da tarefa feita</button></div>
+    <div class="row"><button class="btn" id="dCancel">Cancelar</button><button class="btn main" id="dOk">Concluir</button></div>
+  </div>
 </div>
 
 <form id="login" onsubmit="return false">
@@ -114,6 +235,9 @@ main{padding:16px;max-width:640px;margin:auto}
   <p class="hint" id="lErr" style="color:var(--red)"></p>
   <div class="row"><button class="btn main" id="lGo">Entrar</button></div>
 </form>
+<input type="file" accept="image/*" id="fProd" hidden><input type="file" accept="image/*" id="fAvatar" hidden><input type="file" accept="image/*" id="fProof" hidden>
+<div id="viewer" class="hide"><img id="vImg"></div>
+<div id="dlg" class="hide"><div class="box"><p id="dMsg"></p><div class="row"><button class="btn" id="dNo">Cancelar</button><button class="btn main" id="dYes">Excluir</button></div></div></div>
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -124,25 +248,30 @@ let items=[], filter=null, editId=null, stream=null, loopOn=false, fb={};
 const V='https://www.gstatic.com/firebasejs/10.12.2/';
 
 /* ---------- armazenamento (Firebase ou local) ---------- */
+let tasks=[],emps=[];
+const setCol=(c,a)=>{c=='produtos'?items=a:c=='tarefas'?tasks=a:emps=a;render();renderTasks()};
+const lsGet=k=>{try{return JSON.parse(localStorage[k]||'[]')}catch{return[]}};
+const lsSet=(k,a)=>{try{localStorage[k]=JSON.stringify(a)}catch{}};
+const arr=c=>c=='produtos'?items:c=='tarefas'?tasks:emps;
 const store={
-  async save(it){
-    if(LOCAL){const i=items.findIndex(x=>x.id===it.id);i>=0?items[i]=it:items.push(it);localStorage.ls=JSON.stringify(items);render()}
-    else await fb.setDoc(fb.doc(fb.db,'produtos',it.id),it);
+  async save(it,c='produtos'){
+    if(LOCAL){const a=[...arr(c)],i=a.findIndex(x=>x.id==it.id);i>=0?a[i]=it:a.push(it);lsSet(c,a);setCol(c,a)}
+    else await fb.setDoc(fb.doc(fb.db,c,it.id),it);
   },
-  async del(id){
-    if(LOCAL){items=items.filter(x=>x.id!==id);localStorage.ls=JSON.stringify(items);render()}
-    else await fb.deleteDoc(fb.doc(fb.db,'produtos',id));
+  async del(id,c='produtos'){
+    if(LOCAL){const a=arr(c).filter(x=>x.id!=id);lsSet(c,a);setCol(c,a)}
+    else await fb.deleteDoc(fb.doc(fb.db,c,id));
   }
 };
 async function init(){
-  if(LOCAL){$('#mode').textContent='modo local (sem servidor)';items=JSON.parse(localStorage.ls||'[]');render();return}
+  if(LOCAL){$('#mode').textContent='modo local (sem servidor)';setCol('produtos',lsGet('produtos'));setCol('tarefas',lsGet('tarefas'));setCol('funcionarios',lsGet('funcionarios'));return}
   const [a,au,fs]=await Promise.all([import(V+'firebase-app.js'),import(V+'firebase-auth.js'),import(V+'firebase-firestore.js')]);
   const app=a.initializeApp(cfg), auth=au.getAuth(app);
   fb={...fs,db:fs.initializeFirestore(app,{localCache:fs.persistentLocalCache()})};
   $('#mode').textContent='sincronizado • Firebase';
   au.onAuthStateChanged(auth,u=>{
     $('#login').classList.toggle('on',!u);
-    if(u)fb.onSnapshot(fb.collection(fb.db,'produtos'),s=>{items=s.docs.map(d=>d.data());render()});
+    if(u)['produtos','tarefas','funcionarios'].forEach(c=>fb.onSnapshot(fb.collection(fb.db,c),s=>setCol(c,s.docs.map(d=>d.data()))));
   });
   $('#lGo').onclick=async()=>{try{$('#lErr').textContent='';await au.signInWithEmailAndPassword(auth,$('#lMail').value.trim(),$('#lPass').value)}catch{$('#lErr').textContent='E-mail ou senha incorretos'}};
 }
@@ -167,7 +296,7 @@ function render(){
   $('#nr').textContent=cnt('red');$('#ny').textContent=cnt('yel');$('#nb').textContent=cnt('blue');
   $$('.stat').forEach(e=>e.classList.toggle('on',e.dataset.f==filter));
   const show=all.filter(i=>(!filter||i.s.cls==filter)&&(i.name.toLowerCase().includes(q)||i.code.includes(q)));
-  $('#list').innerHTML=show.length?show.map((i,n)=>`<div class="item ${i.s.cls}" data-id="${i.id}" style="animation-delay:${Math.min(n,10)*45}ms"><div class="t"><h3>${esc(i.name)}</h3><p>${i.code}</p></div><div class="badge"><b>${fmt(i.s.d)}</b><span>${i.s.txt}</span></div></div>`).join(''):`<div class="empty">Nenhum produto ainda.<br>Toque em <b>Escanear</b> para começar.</div>`;
+  $('#list').innerHTML=show.length?show.map((i,n)=>`<div class="item ${i.s.cls}" data-id="${i.id}" style="animation-delay:${Math.min(n,10)*45}ms">${i.photo?`<img class="th" src="${i.photo}">`:''}<div class="t"><h3>${esc(i.name)}</h3><p>${i.code}</p></div><div class="badge"><b>${fmt(i.s.d)}</b><span>${i.s.txt}</span></div></div>`).join(''):`<div class="empty">Nenhum produto ainda.<br>Toque em <b>Escanear</b> para começar.</div>`;
 }
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 $('#list').onclick=e=>{const el=e.target.closest('.item');if(el)openForm(items.find(i=>i.id==el.dataset.id))};
@@ -177,7 +306,7 @@ $('#q').oninput=render;
 /* ---------- sheet ---------- */
 const open=()=>{$('#bg').classList.add('on');$('#sheet').classList.add('on')};
 const close=()=>{stopCam();$('#bg').classList.remove('on');$('#sheet').classList.remove('on')};
-const view=v=>{$('#vScan').classList.toggle('hide',v!='scan');$('#vForm').classList.toggle('hide',v!='form')};
+const view=v=>['scan','form','emp','done'].forEach(k=>$('#v'+k[0].toUpperCase()+k.slice(1)).classList.toggle('hide',k!=v));
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2600)}
 $('#bg').onclick=close;$('#cancel1').onclick=close;
 $('#fab').onclick=()=>{editId=null;open();startScan()};
@@ -223,12 +352,17 @@ async function found(code){
 }
 
 /* ---------- formulário ---------- */
+let pPhoto='';
+function drawP(){$('#pPrev').innerHTML=pPhoto?`<img src="${pPhoto}">`:'Sem foto';$('#pDel').classList.toggle('hide',!pPhoto);$('#pPhoto').textContent=pPhoto?'Trocar foto':'Adicionar foto do produto'}
+$('#pPhoto').onclick=()=>$('#fProd').click();
+$('#fProd').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f){pPhoto=await shrink(f,600,.7);drawP()}};
+$('#pDel').onclick=()=>{pPhoto='';drawP()};
 function openForm(it){
   editId=it?.id||null;view('form');open();
   $('#fTitle').textContent=it?'Editar produto':'Novo produto';
   $('#fCode').value=it?.code||'';$('#fName').value=it?.name||'';$('#nameHint').textContent='';
   $('#fDate').value=it?fmt(new Date(it.date+'T00:00:00')):'';
-  $('#fDel').classList.toggle('hide',!it);
+  $('#fDel').classList.toggle('hide',!it);pPhoto=it?.photo||'';drawP();
 }
 $('#fDate').oninput=e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);e.target.value=v.replace(/(\d{2})(\d)/,'$1/$2').replace(/(\d{2})\/(\d{2})(\d)/,'$1/$2/$3')};
 $('#fCode').onchange=async e=>{const c=e.target.value.trim();if(c&&!$('#fName').value){const r=await lookup(c);if(r){$('#fName').value=r.name;$('#nameHint').textContent='✓ Nome identificado automaticamente'}}};
@@ -238,9 +372,138 @@ $('#fSave').onclick=async()=>{
   if(!d)return toast('Data inválida. Use dd/mm/aaaa');
   const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   const id=editId||Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-  try{await store.save({id,code,name,date:iso});close();toast('Produto salvo ✓')}catch{toast('Erro ao salvar')}
+  try{await store.save({id,code,name,date:iso,photo:pPhoto});close();toast('Produto salvo ✓')}catch{toast('Erro ao salvar')}
 };
-$('#fDel').onclick=async()=>{if(confirm('Excluir este produto?')){await store.del(editId);close();toast('Excluído')}};
+$('#fDel').onclick=async()=>{if(await ask('Excluir este produto?')){await store.del(editId);close();toast('Excluído')}};
+
+
+/* ---------- confirmação própria ---------- */
+const ask=m=>new Promise(r=>{$('#dMsg').textContent=m;$('#dlg').classList.remove('hide');const f=v=>{$('#dlg').classList.add('hide');r(v)};$('#dYes').onclick=()=>f(true);$('#dNo').onclick=()=>f(false)});
+
+/* ---------- abas ---------- */
+$$('nav button').forEach(b=>b.onclick=()=>{
+  $$('nav button').forEach(x=>x.classList.toggle('on',x==b));
+  ['val','calc','chk'].forEach(k=>$('#tab-'+k).classList.toggle('hide',k!=b.dataset.t));
+  $('#fab').classList.toggle('hide',b.dataset.t!='val');scrollTo({top:0});
+});
+
+/* ---------- calculadora ---------- */
+let cm='top',sp='dog',summary='';
+const nf=n=>String(+(+n).toFixed(2)).replace('.',',');
+const pl=n=>{const w=Math.floor(n),m=+(n%1).toFixed(2),u=w>1?' comprimidos':' comprimido',f=m==.25?'um quarto':m==.5?'meio':m==.75?'três quartos':'';return !m?w+u:!w?(m==.5?'meio comprimido':f+' de comprimido'):w+u+' e '+f};
+const g=id=>parseFloat($(id).value.replace(',','.'));
+const dmy=d=>d.toLocaleDateString('pt-BR');
+const cx=n=>n+(n>1?' caixas':' caixa');
+/* ---------- explicação dos remédios ---------- */
+function info(){
+  const cat=sp=='cat';
+  if(cm=='top')return['O que é o Top Gard Plus?',`<p>É um <b>vermífugo</b> (remédio para vermes) em comprimido de 600 mg, da Vansil, para cães e gatos adultos.</p><ul><li><b>Combate:</b> vermes redondos (como ascarídeos e ancilóstomos) e vermes chatos, as tênias, inclusive a que é transmitida pela pulga.</li><li><b>Fórmula:</b> praziquantel 50 mg + pirantel 144 mg + febantel 150 mg em cada comprimido.</li><li><b>Dose da bula:</b> cães até 2 kg, um quarto de comprimido; de 2 a 5 kg, meio; de 5 a 10 kg, 1; acima de 10 kg, 1 comprimido a cada 10 kg. Gatos: um quarto de comprimido a cada 2 kg.</li></ul><p class="hint">Use com orientação do veterinário.</p>`];
+  return['O que é o Mellis Vet?',`<p>É um <b>anti-inflamatório e analgésico</b> da Avert, feito com <b>meloxicam</b>. Alivia a <b>dor</b>, diminui a <b>inflamação</b> e ajuda a baixar a febre.</p><ul><li><b>Para que serve:</b> controlar dor e inflamação, por exemplo depois de cirurgias.</li><li><b>Como dar:</b> 1 vez ao dia (a cada 24 horas), pela boca, pode ser junto da comida. No 1º dia a dose é maior e, nos outros dias, cai pela metade.</li><li><b>Apresentações:</b> ${cat?'para gatos só existe o 0,2 mg (10 comprimidos). Tempo máximo: 14 dias.':'para cães: 0,5, 2, 3 e 4 mg, com 10 comprimidos bissulcados (dá para partir ao meio). Tempo máximo: 13 dias.'}</li><li><b>Cuidado:</b> ${cat?'não usar em gatos com menos de 1 ano, com problemas de rim, fígado, coração, estômago ou intestino, nem desidratados.':'não usar em cães com menos de 1 ano, fêmeas gestantes ou lactantes.'} Venda com receita, e cada espécie usa a sua apresentação.</li></ul>`];
+}
+function calc(){
+  const w=g('#cW');summary='';
+  const[it,ib]=info();$('#infoT').textContent=it;$('#infoB').innerHTML=ib;
+  $$('#dayChips .chip').forEach(c=>c.classList.toggle('on',+c.dataset.d==g('#mD')));
+  if(!(w>0)){$('#cOut').innerHTML='<div class="empty">Digite o peso do animal lá em cima</div>';return}
+  let h='';
+  if(cm=='top'){
+    const kg=g('#tKg')||10,box=g('#tBox')||4,n=Math.max(1,Math.round(g('#tN'))||1),gap=Math.max(1,Math.round(g('#tGap'))||15);
+    const cat=sp=='cat',t=cat?Math.ceil(w/2)/4:(kg==10&&w<=10?(w<=2?.25:w<=5?.5:1):Math.ceil(w/kg*2)/2),tot=t*n,bx=Math.ceil(tot/box),left=bx*box-tot;
+    const ds=[...Array(n)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i*gap);return[i?`Daqui a ${i*gap} dias`:'Hoje',dmy(d)]});
+    h=`<div class="res best"><h3>Top Gard Plus</h3><div class="big">${pl(t)}</div><p>por vez, para um ${cat?'gato':'cachorro'} de ${nf(w)} kg</p><div class="steps">${ds.map(x=>`<div class="st"><b>${x[0]}<br><small style="color:var(--mut);font-weight:400">${x[1]}</small></b><span><b style="color:#fff">${pl(t)}</b></span></div>`).join('')}</div><p>Tratamento completo: <b>${pl(tot)}</b><br>Levar: <b>${cx(bx)}</b> (cada caixa vem com ${nf(box)})</p>${left?`<p class="keep">Sobram <b>${pl(left)}</b> na caixa. Guarde para o reforço, daqui a uns 3 ou 6 meses.</p>`:''}</div>`;
+    summary=`Top Gard Plus - ${cat?'gato':'cachorro'} de ${nf(w)} kg\nDar ${pl(t)} por vez:\n`+ds.map(x=>`- ${x[0]} (${x[1]}): ${pl(t)}`).join('\n')+`\nTotal: ${pl(tot)} = ${cx(bx)}`+(left?`\nSobram ${pl(left)} para o reforço (daqui a 3 ou 6 meses)`:'');
+  }else{
+    const cat=sp=='cat',S=cat?[.2]:[.5,2,3,4],mx=cat?14:13,an=cat?'gato':'cachorro',nm=cat?'Mellis Vet Gatos':'Mellis Vet';
+    const d1=g('#mA')||(cat?.1:.2),dm=g('#mB')||(cat?.05:.1),days=Math.max(1,Math.round(g('#mD'))||1),box=g('#mBox')||10;
+    const rows=S.map(s=>{const r=x=>Math.max(.5,Math.round(w*x/s*2)/2);const t1=r(d1),tm=r(dm),total=t1+tm*(days-1);return{s,t1,tm,total,bx:Math.ceil(total/box),err:(tm*s-w*dm)/(w*dm)}});
+    const ok=r=>r.tm<=3&&Math.abs(r.err)<=.15,e=r=>Math.round(Math.abs(r.err)*100);
+    rows.sort((a,b)=>(ok(b)-ok(a))||e(a)-e(b)||a.tm-b.tm||a.bx-b.bx||a.s-b.s);
+    const later=days<2?'':days==2?'2º dia':`Do 2º ao ${days}º dia`;
+    const mg=(n,s)=>`<br><small style="color:var(--mut);font-weight:400">${nf(n*s)} mg</small>`;
+    const block=(r,best)=>`<div class="res ${best?'best':''}"><h3>${nm} ${nf(r.s)} mg ${best&&S.length>1?'<em>MAIS FÁCIL</em>':''}</h3><div class="steps"><div class="st"><b>1º dia</b><span>${pl(r.t1)}${mg(r.t1,r.s)}</span></div>${later?`<div class="st"><b>${later}</b><span>${pl(r.tm)} por dia${mg(r.tm,r.s)}</span></div>`:''}</div><p>Total: <b>${pl(r.total)}</b><br>Levar: <b>${cx(r.bx)}</b> (cada caixa vem com ${nf(box)})</p>${Math.abs(r.err)>.01?`<p style="color:var(--mut)">A dose por dia fica um pouco ${r.err>0?'acima':'abaixo'} do ideal (${nf(w*dm)} mg). Confirme com o veterinário.</p>`:''}</div>`;
+    const r=rows[0],good=ok(r);
+    const note=cat?'Não usar em gatos com menos de 1 ano, com problemas de rim, fígado, coração, estômago ou intestino, nem desidratados. Tratamento por até 14 dias.':'Não usar em cães com menos de 1 ano, fêmeas gestantes ou lactantes. Tratamento por até 13 dias.';
+    h=`<div class="res"><p style="margin:0">Um ${an} de ${nf(w)} kg precisa de <b>${nf(w*d1)} mg</b> no 1º dia e <b>${nf(w*dm)} mg</b> por dia nos outros dias.</p></div>`+block(r,good)+(good||S.length==1?'':'<p class="hint">Nenhuma apresentação fecha a dose exata. Esta é a mais próxima, confirme com o veterinário.</p>')+(days>mx?`<p class="hint lt">Atenção: a bula indica no máximo ${mx} dias seguidos.</p>`:'')+(S.length>1?`<details class="adv"><summary>Ver outras apresentações</summary>${rows.slice(1).map(x=>block(x,false)).join('')}</details>`:'')+`<p class="hint" style="margin-top:12px">${note}</p>`;
+    summary=`Meloxicam ${nm} ${nf(r.s)} mg - ${an} de ${nf(w)} kg\n1º dia: ${pl(r.t1)}\n`+(later?`${later}: ${pl(r.tm)} por dia\n`:'')+`Total: ${pl(r.total)} = ${cx(r.bx)}\nSiga a receita do veterinário.`;
+  }
+  $('#cOut').innerHTML=h;
+}
+$$('.seg:not(#spSeg) button').forEach(b=>b.onclick=()=>{cm=b.dataset.m;$$('.seg:not(#spSeg) button').forEach(x=>x.classList.toggle('on',x==b));$('#cTop').classList.toggle('hide',cm!='top');$('#cMel').classList.toggle('hide',cm!='mel');calc()});
+$$('#tab-calc input').forEach(i=>i.oninput=calc);
+$$('#spSeg button').forEach(b=>b.onclick=()=>{sp=b.dataset.s;$$('#spSeg button').forEach(x=>x.classList.toggle('on',x==b));const c=sp=='cat';$('#mA').value=c?'0,1':'0,2';$('#mB').value=c?'0,05':'0,1';$('#dMax').dataset.d=c?14:13;$('#dMax').textContent=(c?14:13)+' dias (máx.)';calc()});
+$('#dayChips').onclick=e=>{const c=e.target.closest('.chip');if(c){$('#mD').value=c.dataset.d;calc()}};
+$('#cCopy').onclick=async()=>{if(!summary)return toast('Digite o peso primeiro');try{await navigator.clipboard.writeText(summary);toast('Explicação copiada ✓')}catch{toast('Não foi possível copiar')}};
+calc();
+
+/* ---------- fotos e funcionários ---------- */
+const COLORS=['#ffffff','#2f7bff','#ffc21a','#ff3b3b','#2ecc71','#b36bff','#ff7ab8','#19d3da'];
+const shrink=(file,max,q=.72)=>new Promise((res,rej)=>{const im=new Image(),u=URL.createObjectURL(file);im.onload=()=>{const s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',q))};im.onerror=rej;im.src=u});
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const av=(e,sz='')=>`<span class="av ${sz}" style="--c:${e.color||'#555'}">${e.photo?`<img src="${e.photo}">`:esc((e.name||'?')[0].toUpperCase())}</span>`;
+const empOf=t=>emps.find(e=>e.id==t.who||e.name==t.who)||{name:'Equipe',color:'#555'};
+let eId=null,ePhoto='',eColor=COLORS[0];
+function drawEmp(){
+  $('#ePrev').innerHTML=av({name:$('#eName').value||'?',color:eColor,photo:ePhoto},'lg');
+  $('#eColors').innerHTML=COLORS.map(c=>`<button class="sw ${c==eColor?'on':''}" data-c="${c}" style="background:${c}"></button>`).join('');
+}
+function openEmp(e){eId=e?.id||null;ePhoto=e?.photo||'';eColor=e?.color||COLORS[emps.length%COLORS.length];$('#eName').value=e?.name||'';$('#eDel').classList.toggle('hide',!e);drawEmp();view('emp');open()}
+$('#eName').oninput=drawEmp;
+$('#eColors').onclick=e=>{const b=e.target.closest('.sw');if(b){eColor=b.dataset.c;drawEmp()}};
+$('#ePhoto').onclick=()=>$('#fAvatar').click();
+$('#fAvatar').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f){ePhoto=await shrink(f,220);drawEmp()}};
+$('#eSave').onclick=async()=>{const name=$('#eName').value.trim();if(!name)return toast('Digite o nome');await store.save({id:eId||uid(),name,color:eColor,photo:ePhoto},'funcionarios');close();toast('Funcionário salvo ✓')};
+$('#eDel').onclick=async()=>{if(!await ask('Excluir este funcionário?'))return;for(const t of tasks.filter(t=>t.who==eId))await store.save({...t,who:''},'tarefas');await store.del(eId,'funcionarios');if(who==eId)who=null;close()};
+$('#eEdit').onclick=()=>openEmp(emps.find(e=>e.id==who));
+
+/* ---------- checklist ---------- */
+const today=()=>new Date().toLocaleDateString('sv');
+const nowHM=()=>new Date().toLocaleTimeString('sv').slice(0,5);
+const isDone=t=>t.doneAt&&(!t.daily||t.doneAt.slice(0,10)==today());
+const late=t=>t.due&&!isDone(t)&&nowHM()>t.due;
+let who=null;
+const SH=['Abertura','Durante o dia','Fechamento'];
+const taskHTML=t=>{const k=isDone(t),e=empOf(t),l=late(t),lt=k&&t.due&&t.doneAt.slice(11,16)>t.due;
+  return `<div class="task ${k?'ok':''}" data-id="${t.id}"><button class="tick" data-a="t">${k?'✓':''}</button><div class="t"><h3>${esc(t.text)}</h3><p>${esc(e.name)}${t.due?` • <span class="${l||lt?'lt':''}">até ${t.due}${l?' (atrasada)':''}</span>`:''}${t.daily?' • todo dia':''}${k?` • feito às ${t.doneAt.slice(11,16)}${lt?' (fora do horário)':''}`:''}</p></div>${k&&t.proof?`<img class="th" src="${t.proof}" data-a="p">`:''}${av(e)}<button class="x" data-a="d">×</button></div>`};
+function renderTasks(){
+  const cur=$('#tWho').value;
+  $('#tWho').innerHTML='<option value="">Equipe (todos)</option>'+emps.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');$('#tWho').value=cur;
+  $('#chips').innerHTML=`<button class="chip ${!who?'on':''}" data-w="">Todos</button>`+emps.map(e=>`<button class="chip ${who==e.id?'on':''}" data-w="${e.id}">${av(e)}${esc(e.name)}</button>`).join('')+'<button class="chip" data-w="+">+ Funcionário</button>';
+  $('#eEdit').classList.toggle('hide',!emps.find(e=>e.id==who));
+  const vis=tasks.filter(t=>!who||empOf(t).id==who),d=vis.filter(isDone).length;
+  $('#pBar').style.width=(vis.length?d/vis.length*100:0)+'%';
+  $('#pTxt').textContent=vis.length?`${d} de ${vis.length} concluídas hoje`:'';
+  $('#tList').innerHTML=vis.length?SH.map(s=>{const l=vis.filter(t=>t.shift==s).sort((a,b)=>(a.due||'99')>(b.due||'99')?1:-1);return l.length?`<h4 class="sh">${s}</h4>`+l.map(taskHTML).join(''):''}).join(''):'<div class="empty">Nenhuma tarefa ainda.<br>Escreva a primeira tarefa acima.</div>';
+}
+setInterval(renderTasks,60000);
+$('#chips').onclick=e=>{const c=e.target.closest('.chip');if(!c)return;if(c.dataset.w=='+')return openEmp();who=c.dataset.w||null;renderTasks()};
+$('#tAdd').onclick=async()=>{
+  const text=$('#tTxt').value.trim();if(!text)return toast('Escreva a tarefa');
+  await store.save({id:uid(),text,who:$('#tWho').value,shift:$('#tShift').value,daily:$('#tDaily').checked,due:$('#tDue').value,doneAt:'',proof:''},'tarefas');
+  $('#tTxt').value='';$('#tDue').value='';toast('Tarefa adicionada ✓');
+};
+let dId=null,dProof='';
+function openDone(t){dId=t.id;dProof='';$('#dTitle').textContent=t.text;$('#dSub').textContent=empOf(t).name+(t.due?` • até ${t.due}`:'');$('#dPrev').textContent='Nenhuma foto';view('done');open()}
+$('#dPhoto').onclick=()=>$('#fProof').click();
+$('#fProof').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f){dProof=await shrink(f,900,.7);$('#dPrev').innerHTML=`<img src="${dProof}">`}};
+$('#dCancel').onclick=close;
+$('#dOk').onclick=async()=>{const t=tasks.find(x=>x.id==dId);if(!t)return;navigator.vibrate?.(40);await store.save({...t,doneAt:new Date().toLocaleString('sv'),proof:dProof},'tarefas');close();toast('Tarefa concluída ✓')};
+$('#viewer').onclick=()=>$('#viewer').classList.add('hide');
+$('#tList').onclick=async e=>{
+  const el=e.target.closest('.task'),a=e.target.dataset.a;if(!el||!a)return;
+  const t=tasks.find(x=>x.id==el.dataset.id);
+  if(a=='p'){$('#vImg').src=t.proof;$('#viewer').classList.remove('hide')}
+  else if(a=='t'){isDone(t)?await store.save({...t,doneAt:'',proof:''},'tarefas'):openDone(t)}
+  else if(await ask('Excluir esta tarefa?'))await store.del(t.id,'tarefas');
+};
+
+/* ---------- proteção: sem seleção, cópia, menu e atalhos de inspeção ---------- */
+const inField=e=>{const t=e.target.nodeType==1?e.target:e.target.parentElement;return !!(t&&t.closest('input,textarea'))};
+document.addEventListener('contextmenu',e=>e.preventDefault());
+['selectstart','dragstart','copy','cut'].forEach(ev=>document.addEventListener(ev,e=>{if(!inField(e))e.preventDefault()}));
+addEventListener('keydown',e=>{
+  const k=(e.key||'').toLowerCase(),c=e.ctrlKey||e.metaKey;
+  if(e.key=='F12'||(c&&e.shiftKey&&'ijcks'.includes(k))||(c&&e.altKey&&'iuj'.includes(k))||(c&&['u','s','p'].includes(k))||(c&&!inField(e)&&['a','c','x'].includes(k))){e.preventDefault();e.stopPropagation()}
+},true);
 
 /* ---------- instalar / service worker ---------- */
 let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#install').classList.remove('hide')});
