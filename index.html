@@ -181,6 +181,11 @@ img{-webkit-user-drag:none}
 .seal{position:absolute;top:-9px;left:14px;background:#fff;color:#000;border-radius:99px;padding:5px 11px 5px 8px;font-size:10px;font-weight:700;letter-spacing:.4px;display:flex;align-items:center;gap:5px;text-transform:uppercase;box-shadow:0 4px 18px rgba(255,255,255,.18)}
 .seal svg{width:13px;height:13px}
 .dots{display:flex;gap:6px;justify-content:center;margin:2px 0 14px}.dots i{width:6px;height:6px;border-radius:50%;background:#333;transition:all .35s var(--ease)}.dots i.on{width:18px;border-radius:6px;background:#fff}
+.item .th{width:54px;height:54px;border-radius:14px;cursor:zoom-in}
+.mh .mi img,.res .mi img,#pPrev img,.task .th{cursor:zoom-in}
+#zbg{position:fixed;inset:0;z-index:79;background:rgba(0,0,0,0);-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0);touch-action:none;transition:background .5s cubic-bezier(.32,.72,0,1),backdrop-filter .5s cubic-bezier(.32,.72,0,1),-webkit-backdrop-filter .5s cubic-bezier(.32,.72,0,1)}
+#zbg.on{background:rgba(0,0,0,.86);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+#zimg{position:fixed;z-index:80;background:#fff;box-sizing:border-box;box-shadow:0 24px 70px rgba(0,0,0,.55);will-change:left,top,width,height;transition:left .6s cubic-bezier(.22,1.12,.36,1),top .6s cubic-bezier(.22,1.12,.36,1),width .6s cubic-bezier(.22,1.12,.36,1),height .6s cubic-bezier(.22,1.12,.36,1),border-radius .6s cubic-bezier(.32,.72,0,1)}
 </style></head><body>
 <div id="splash">
   <div class="sw" id="sw">
@@ -346,12 +351,13 @@ img{-webkit-user-drag:none}
     <p class="hint" id="nStatus"></p>
     <div class="row" style="margin-top:8px"><button class="btn main" id="nEnable">Ativar lembretes</button></div>
     <label class="cb"><input type="checkbox" id="nSound" checked> Tocar som de bip</label>
+    <label class="cb"><input type="checkbox" id="nGen" checked> Lembrete geral a cada 2 horas: “Os funcionários fizeram as tarefas do dia? Lembre eles!”</label>
     <label class="lbl">Este celular é de</label>
     <select class="inp" id="nWho"></select>
     <label class="lbl">Avisar antes do horário limite</label>
     <select class="inp" id="nPre"><option value="0">Só na hora</option><option value="5">5 minutos antes</option><option value="10">10 minutos antes</option><option value="15">15 minutos antes</option><option value="30">30 minutos antes</option></select>
     <div class="row"><button class="btn" id="nTest">Testar bip</button><button class="btn main" id="nSave">Salvar</button></div>
-    <p class="hint" style="margin-top:12px">Os lembretes avisam tarefas que têm horário limite e ainda não foram feitas: antes do horário, na hora e depois, se estiver atrasada. Funcionam com o app aberto ou em segundo plano. Com o app totalmente fechado o celular pode não avisar.</p>
+    <p class="hint" style="margin-top:12px">O lembrete geral toca às 8:30, 10:30, 14:30, 16:30 e 18:30. Os avisos das tarefas com horário limite também seguem esse expediente. Nada é enviado das 12:00 às 14:00 (intervalo) nem depois das 19:30 e antes das 8:30. Funcionam com o app aberto ou em segundo plano; com o app totalmente fechado o celular pode não avisar.</p>
   </div>
 </div>
 
@@ -428,7 +434,7 @@ function render(){
   $('#list').innerHTML=show.length?show.map((i,n)=>`<div class="item ${i.s.cls}" data-id="${i.id}" style="animation-delay:${Math.min(n,10)*45}ms">${i.photo?`<img class="th" src="${i.photo}">`:''}<div class="t"><h3>${esc(i.name)}</h3><p>${i.code}</p></div><div class="badge"><b>${fmt(i.s.d)}</b><span>${i.s.txt}</span></div></div>`).join(''):`<div class="empty">Nenhum produto ainda.<br>Toque em <b>Escanear</b> para começar.</div>`;
 }
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-$('#list').onclick=e=>{const el=e.target.closest('.item');if(el)openForm(items.find(i=>i.id==el.dataset.id))};
+$('#list').onclick=e=>{if(e.target.classList.contains('th')){zoomOpen(e.target);return}const el=e.target.closest('.item');if(el)openForm(items.find(i=>i.id==el.dataset.id))};
 $$('.stat').forEach(e=>e.onclick=()=>{filter=filter==e.dataset.f?null:e.dataset.f;render()});
 $('#q').oninput=render;
 
@@ -462,7 +468,7 @@ function stopCam(){loopOn=false;stream?.getTracks().forEach(t=>t.stop());stream=
 
 /* ---------- identificação automática do produto ---------- */
 async function lookup(code){
-  const own=items.find(i=>i.code==code);if(own)return{name:own.name,src:'já cadastrado'};
+  const own=items.find(i=>i.code==code&&i.photo)||items.find(i=>i.code==code);if(own)return{name:own.name,photo:own.photo||'',src:'já cadastrado'};
   for(const h of['openfoodfacts','openbeautyfacts','openproductsfacts']){
     try{
       const r=await fetch(`https://world.${h}.org/api/v2/product/${code}.json?fields=product_name,brands,quantity`);
@@ -476,7 +482,7 @@ async function found(code){
   stopCam();openForm();$('#fCode').value=code;
   $('#nameHint').textContent='Buscando nome do produto...';
   const r=await lookup(code);
-  if(r){$('#fName').value=r.name;$('#nameHint').textContent='✓ Nome identificado automaticamente';$('#fDate').focus()}
+  if(r){$('#fName').value=r.name;$('#nameHint').textContent='✓ Nome identificado automaticamente';if(r.photo){pPhoto=r.photo;drawP();$('#nameHint').textContent='✓ Nome e foto já cadastrados'}$('#fDate').focus()}
   else{$('#nameHint').textContent='Produto não encontrado. Digite o nome (ele ficará salvo).';$('#fName').focus()}
 }
 
@@ -484,6 +490,7 @@ async function found(code){
 let pPhoto='';
 function drawP(){$('#pPrev').innerHTML=pPhoto?`<img src="${pPhoto}">`:'Sem foto';$('#pDel').classList.toggle('hide',!pPhoto)}
 $('#pPhoto').onclick=()=>$('#fProd').click();
+$('#pPrev').onclick=e=>{const i=e.target.closest('img');if(i)zoomOpen(i)};
 $('#pCam').onclick=()=>$('#fProdCam').click();
 $('#fProd').onchange=$('#fProdCam').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(f){pPhoto=await shrink(f,600,.7);drawP()}};
 $('#pDel').onclick=()=>{pPhoto='';drawP()};
@@ -495,14 +502,14 @@ function openForm(it){
   $('#fDel').classList.toggle('hide',!it);pPhoto=it?.photo||'';drawP();
 }
 $('#fDate').oninput=e=>{let v=e.target.value.replace(/\D/g,'').slice(0,8);e.target.value=v.replace(/(\d{2})(\d)/,'$1/$2').replace(/(\d{2})\/(\d{2})(\d)/,'$1/$2/$3')};
-$('#fCode').onchange=async e=>{const c=e.target.value.trim();if(c&&!$('#fName').value){const r=await lookup(c);if(r){$('#fName').value=r.name;$('#nameHint').textContent='✓ Nome identificado automaticamente'}}};
+$('#fCode').onchange=async e=>{const c=e.target.value.trim();if(c&&!$('#fName').value){const r=await lookup(c);if(r){$('#fName').value=r.name;$('#nameHint').textContent='✓ Nome identificado automaticamente';if(r.photo&&!pPhoto){pPhoto=r.photo;drawP()}}}};
 $('#fSave').onclick=async()=>{
   const code=$('#fCode').value.trim(),name=$('#fName').value.trim(),d=parse($('#fDate').value);
   if(!name)return toast('Digite o nome do produto');
   if(!d)return toast('Data inválida. Use dd/mm/aaaa');
   const iso=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   const id=editId||Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-  try{await store.save({id,code,name,date:iso,photo:pPhoto});close();toast('Produto salvo ✓')}catch{toast('Erro ao salvar')}
+  try{await store.save({id,code,name,date:iso,photo:pPhoto||(items.find(i=>i.code&&i.code==code&&i.photo&&i.id!=editId)||{}).photo||''});close();toast('Produto salvo ✓')}catch{toast('Erro ao salvar')}
 };
 $('#fDel').onclick=async()=>{if(await ask('Excluir este produto?')){await store.del(editId);close();toast('Excluído')}};
 
@@ -527,6 +534,30 @@ const askPass=(msg,level)=>new Promise(res=>{
   };
   $('#pYes').onclick=go;$('#pNo').onclick=()=>fin(false);$('#pIn').onkeydown=e=>{if(e.key=='Enter')go()};
 });
+
+/* ---------- ampliar foto (animação estilo iOS) ---------- */
+let zo=null;
+function zoomOpen(src){
+  if(zo||!src||!src.src)return;
+  const r=src.getBoundingClientRect(),cs=getComputedStyle(src),nw=src.naturalWidth||r.width,nh=src.naturalHeight||r.height;
+  const k=Math.min(innerWidth*.94/nw,innerHeight*.78/nh),fw=nw*k,fh=nh*k,fl=(innerWidth-fw)/2,ft=(innerHeight-fh)/2;
+  const bg=document.createElement('div');bg.id='zbg';
+  const z=document.createElement('img');z.id='zimg';z.src=src.src;z.draggable=false;
+  z.style.cssText='left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;border-radius:'+(cs.borderRadius||'12px')+';object-fit:'+(cs.objectFit||'cover');
+  document.body.append(bg,z);src.style.visibility='hidden';zo={src,z,bg};
+  z.getBoundingClientRect();
+  requestAnimationFrame(()=>{bg.classList.add('on');z.style.left=fl+'px';z.style.top=ft+'px';z.style.width=fw+'px';z.style.height=fh+'px';z.style.borderRadius='22px'});
+  bg.onclick=z.onclick=zoomClose;
+}
+function zoomClose(){
+  if(!zo)return;const{src,z,bg}=zo;zo=null;
+  const alive=document.contains(src),r=alive?src.getBoundingClientRect():null,e='cubic-bezier(.32,.72,0,1)';
+  z.style.transition='left .5s '+e+',top .5s '+e+',width .5s '+e+',height .5s '+e+',border-radius .5s '+e+',opacity .4s';
+  bg.classList.remove('on');
+  if(r&&r.width&&r.bottom>0&&r.top<innerHeight){z.style.left=r.left+'px';z.style.top=r.top+'px';z.style.width=r.width+'px';z.style.height=r.height+'px';z.style.borderRadius=getComputedStyle(src).borderRadius}
+  else z.style.opacity='0';
+  setTimeout(()=>{if(alive)src.style.visibility='';z.remove();bg.remove()},520);
+}
 
 /* ---------- abas ---------- */
 $$('nav button').forEach(b=>b.onclick=()=>{
@@ -804,6 +835,8 @@ function renderMedHead(){
   $('#medHead').innerHTML=`<div class="mh">${miHTML(m.id)}<div><b>${m.name}</b><small>${m.sub}</small></div></div>`;
   fixImgs($('#medHead'));
 }
+$('#medHead').onclick=e=>{const i=e.target.closest('img');if(i)zoomOpen(i)};
+$('#cOut').onclick=e=>{const i=e.target.closest('.mi img');if(i)zoomOpen(i)};
 function renderMedSearch(){
   const q=norm($('#medQ').value.trim());
   if(!q){$('#medRes').innerHTML='';return}
@@ -936,7 +969,7 @@ $('#viewer').onclick=()=>$('#viewer').classList.add('hide');
 $('#tList').onclick=async e=>{
   const el=e.target.closest('.task'),a=e.target.dataset.a;if(!el||!a)return;
   const t=tasks.find(x=>x.id==el.dataset.id);
-  if(a=='p'){$('#vImg').src=t.proof;$('#viewer').classList.remove('hide')}
+  if(a=='p')zoomOpen(e.target)
   else if(a=='t'){if(isDone(t)){if(await askPass('Senha para desmarcar a tarefa','emp'))await store.save({...t,doneAt:'',proof:'',log:addLog(t,'d',nowS())},'tarefas')}else openDone(t)}
   else if(await ask('Excluir esta tarefa?')&&await askPass('Senha do gerente para excluir a tarefa','mgr'))await store.del(t.id,'tarefas');
 };
@@ -962,10 +995,17 @@ async function notify(title,body,id){
   if('Notification' in window&&Notification.permission=='granted'){try{const r=await navigator.serviceWorker.ready;r.showNotification(title,{body,icon:'icon-192.png',badge:'icon-192.png',tag:'lindner-'+id,renotify:true,vibrate:[200,100,200,100,300]})}catch{}}
 }
 const m2=s=>{const p=s.split(':');return +p[0]*60+ +p[1]};
+const WORK=m=>(m>=510&&m<720)||(m>=840&&m<=1170);
+const SLOTS=['08:30','10:30','14:30','16:30','18:30'].map(m2);
 function checkReminders(){
   if(!nCfg.on)return;
   const day=today();if(nSeen.d!==day)nSeen={d:day,k:{}};
   const now=m2(nowHM());
+  if(!WORK(now))return;
+  if(nCfg.gen!==false){
+    const sl=SLOTS.find(s=>now>=s&&now-s<=45&&!nSeen.k['g|'+s]);
+    if(sl!==undefined){nSeen.k['g|'+sl]=1;saveSeen();notify('Lindner Scanner','Os funcionários fizeram as tarefas do dia? Lembre eles!','geral'+sl)}
+  }
   tasks.forEach(t=>{
     if(!t.due||isDone(t))return;
     if(nCfg.who&&t.who){const e=empOf(t);if(e.id&&e.id!==nCfg.who)return}
@@ -984,7 +1024,7 @@ function updN(){
 }
 $('#nOpen').onclick=()=>{
   $('#nWho').innerHTML='<option value="">Todos (todas as tarefas)</option>'+emps.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');
-  $('#nWho').value=nCfg.who;$('#nSound').checked=nCfg.sound;$('#nPre').value=String(nCfg.pre);
+  $('#nWho').value=nCfg.who;$('#nSound').checked=nCfg.sound;$('#nGen').checked=nCfg.gen!==false;$('#nPre').value=String(nCfg.pre);
   updN();view('notif');open();
 };
 $('#nEnable').onclick=async()=>{
@@ -993,8 +1033,8 @@ $('#nEnable').onclick=async()=>{
   if('Notification' in window&&Notification.permission=='default'){try{await Notification.requestPermission()}catch{}}
   nCfg.on=true;saveN();updN();toast('Lembretes ativados ✓');
 };
-$('#nSave').onclick=()=>{nCfg.sound=$('#nSound').checked;nCfg.who=$('#nWho').value;nCfg.pre=+$('#nPre').value;saveN();close();toast('Configurações salvas ✓')};
-$('#nTest').onclick=()=>{unlockAudio();setTimeout(()=>notify('Teste de lembrete','Se você ouviu o bip e viu este aviso, está funcionando.','teste'),150)};
+$('#nSave').onclick=()=>{nCfg.sound=$('#nSound').checked;nCfg.gen=$('#nGen').checked;nCfg.who=$('#nWho').value;nCfg.pre=+$('#nPre').value;saveN();close();toast('Configurações salvas ✓')};
+$('#nTest').onclick=()=>{unlockAudio();setTimeout(()=>notify('Lindner Scanner','Os funcionários fizeram as tarefas do dia? Lembre eles!','teste'),150)};
 setInterval(checkReminders,20000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});
 
