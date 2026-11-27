@@ -160,10 +160,10 @@ img{-webkit-user-drag:none}
 .opts{margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;animation:in .35s var(--ease) both}
 .opt{display:flex;align-items:center;gap:12px;width:100%;padding:10px 14px;background:none;text-align:left;font-size:14px;border-bottom:1px solid var(--line)}
 .opt:last-child{border:0}.opt:active{background:#1a1a1a}
-.mi{width:60px;height:60px;border-radius:14px;background:#151515;border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.mi img{width:100%;height:100%;object-fit:cover}.mi.no::after{content:'+';font-size:26px;color:var(--mut)}
+.mi{width:60px;height:60px;border-radius:14px;background:#fff;border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mi img{width:100%;height:100%;object-fit:contain;padding:3px}.mi.no::after{content:'+';font-size:26px;color:var(--mut)}
 .mh{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;margin-top:12px;animation:in .4s var(--ease) both}
-.mh .mi{width:68px;height:68px;cursor:pointer}
+.mh .mi{width:68px;height:68px}
 .mh b,.mr b{display:block;font-size:15px;font-weight:600}.mh small,.mr small{display:block;font-size:12px;color:var(--mut);margin-top:2px}
 .mh .tap{font-size:10px;color:#666;margin-top:6px}
 .mr{display:flex;gap:12px;align-items:center;width:100%;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin-bottom:8px;text-align:left;animation:in .3s var(--ease) both}
@@ -362,7 +362,7 @@ img{-webkit-user-drag:none}
   <p class="hint" id="lErr" style="color:var(--red)"></p>
   <div class="row"><button class="btn main" id="lGo">Entrar</button></div>
 </div>
-<input type="file" accept="image/*" capture="environment" id="fProdCam" hidden><input type="file" accept="image/*" capture="user" id="fAvatarCam" hidden><input type="file" accept="image/*" capture="environment" id="fProofCam" hidden><input type="file" accept="image/*" id="fMed" hidden><input type="file" accept="image/*" id="fProd" hidden><input type="file" accept="image/*" id="fAvatar" hidden><input type="file" accept="image/*" id="fProof" hidden>
+<input type="file" accept="image/*" capture="environment" id="fProdCam" hidden><input type="file" accept="image/*" capture="user" id="fAvatarCam" hidden><input type="file" accept="image/*" capture="environment" id="fProofCam" hidden><input type="file" accept="image/*" id="fProd" hidden><input type="file" accept="image/*" id="fAvatar" hidden><input type="file" accept="image/*" id="fProof" hidden>
 <div id="viewer" class="hide"><img id="vImg"></div>
 <div id="pdlg" class="hide"><div class="box"><p id="pMsg"></p><input class="inp pw" id="pIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore placeholder="Digite a senha"><p class="hint lt" id="pErr"></p><div class="row" style="margin-top:8px"><button class="btn" id="pNo">Cancelar</button><button class="btn main" id="pYes">Confirmar</button></div></div></div>
 <div id="dlg" class="hide"><div class="box"><p id="dMsg"></p><div class="row"><button class="btn" id="dNo">Cancelar</button><button class="btn main" id="dYes">Excluir</button></div></div></div>
@@ -593,9 +593,10 @@ const avatarPNG=emp=>new Promise(res=>{
 const IMG={logo:logoData,pill:pillImgs,med:loadMedImg,avatar:avatarPNG};
 const PK={c:48,r:48,o:40};
 const wrapInline=(d,t,w1,w)=>{const L=[];let cur='',lim=w1;for(const x of t.split(/\s+/)){const tt=cur?cur+' '+x:x;if(d.getTextWidth(tt)>lim&&cur){L.push(cur);cur=x;lim=w}else cur=tt}if(cur)L.push(cur);return L};
-async function buildPDF(r){
+async function buildPDF(r,lv){
+  if(lv===undefined)lv=r.animals.length>=3?2:0;
   const{jsPDF}=window.jspdf,d=new jsPDF({unit:'mm',format:'a4'}),W=210,M=14,CW=W-2*M;
-  const nA=r.animals.length,CP=nA>=2,D=nA>=3;
+  const CP=lv>=1,D=lv>=2;
   const logo=await IMG.logo(),now=new Date();
   const stamp=now.toLocaleDateString('pt-BR')+' às '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   let y=0;
@@ -633,7 +634,7 @@ async function buildPDF(r){
   for(const a of r.animals){
     for(const row of a.rows)row.p=await IMG.pill(row.n,row.k);
     if(CP){
-      const ch=D?17.5:21;need(ch+3);
+      const ch=D?17:21;need(ch+3);
       d.setFillColor(244,244,244);d.roundedRect(M,y,CW,ch,2.5,2.5,'F');d.setFillColor(0,0,0);d.roundedRect(M,y,2.2,ch,1,1,'F');
       const ttl=String(a.title).slice(0,42);
       d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(11);d.text(ttl,M+7,y+(D?6.2:6.6));
@@ -644,9 +645,9 @@ async function buildPDF(r){
       P.imgs.forEach(im=>{const wm=im.w*s,hm=im.h*s;d.addImage(im.u,'PNG',x,cy-hm/2,wm,hm,'p'+im.w+'x'+im.h+im.u.length,'FAST');x+=wm+gp});
       if(P.more){d.setFont('helvetica','normal');d.setFontSize(8.5);d.setTextColor(90,90,90);d.text('+'+P.more,x,cy+1)}
       d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(9.5);d.text(pl(r0.n)+' por vez',x+2.5,cy+1.2);
-      const sched=a.rows.map(rr=>(rr.l=='Hoje'?'Hoje':rr.l.replace('Daqui a ','+').replace(' dias','d'))+' '+String(rr.sub).slice(0,5)).join('   |   ');
+      const sched=a.rows.map(rr=>rr.next?'Próximo (6 meses) '+rr.date:(rr.l=='Hoje'?'Hoje':rr.l.replace('Daqui a ','+').replace(' dias','d'))+' '+String(rr.sub).slice(0,5)).join('   |   ');
       d.setFont('helvetica','normal');d.setFontSize(8.2);d.setTextColor(100,100,100);d.text(sched,M+CW-4,cy+1.2,{align:'right'});
-      y+=ch+(D?2.2:3.5);continue;
+      y+=ch+(D?2:3.5);continue;
     }
     const RH=13,h=15+a.rows.length*RH+3;need(h+4);
     d.setFillColor(244,244,244);d.roundedRect(M,y,CW,h,3,3,'F');
@@ -663,7 +664,7 @@ async function buildPDF(r){
       let x=M+82;
       P.imgs.forEach(im=>{const wm=im.w*sc,hm=im.h*sc;d.addImage(im.u,'PNG',x,ry+5.5-hm/2,wm,hm,'p'+im.w+'x'+im.h+im.u.length,'FAST');x+=wm+gp});
       if(P.more){d.setFont('helvetica','normal');d.setFontSize(9);d.setTextColor(90,90,90);d.text('+'+P.more,x,ry+6.5)}
-      d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(10);d.text(pl(row.n),M+CW-5,ry+6.5,{align:'right'});
+      d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(10);d.text(row.next?row.date:pl(row.n),M+CW-5,ry+6.5,{align:'right'});
     });
     y+=h+5;
   }
@@ -675,26 +676,27 @@ async function buildPDF(r){
   d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(D?11:12);d.text(r.totalsTitle||'Resumo para levar',M+7,y+(D?8:10));
   let ty=y+(D?14.5:18);
   T.forEach(t=>{d.setFont('helvetica','normal');d.setFontSize(D?8.2:9);d.setTextColor(110,110,110);d.text(t.k,M+7,ty);d.setFont('helvetica','bold');d.setFontSize(D?9.2:10);d.setTextColor(0,0,0);d.text(t.v,M+(D?58:65),ty);ty+=t.v.length*st+sg});
-  y+=th+(D?4:9);
+  y+=th+(D?5:9);
   // complemento (ex.: probiótico junto com o vermífugo)
   if(r.comp){
-    const c=r.comp,fs=D?7.8:8.6,lh=D?3.55:4.1,iw=CW-12;
+    const c=r.comp,fs=D?7.8:8.6,lh=D?3.55:4.1,bw2=D?19:22,ix=c.img?bw2+5:0,iw=CW-12-ix,ox=M+6+ix;
     d.setFont('helvetica','normal');d.setFontSize(fs);
     const Pz=c.paras.map(([k,t])=>{d.setFont('helvetica','bold');const wl=d.getTextWidth(k+': ');d.setFont('helvetica','normal');return{k,wl,L:wrapInline(d,t,iw-wl,iw)}});
-    const ch=(D?11:13.5)+Pz.reduce((s,p)=>s+p.L.length*lh+(D?1.1:1.8),0)+1.5;need(ch+3);
+    const th2=(D?11:13.5)+Pz.reduce((s,p)=>s+p.L.length*lh+(D?1.1:1.8),0)+1.5,ch=Math.max(th2,c.img?bw2+7:0);need(ch+3);
     d.setDrawColor(185,185,185);d.setLineWidth(.3);d.roundedRect(M,y,CW,ch,3,3,'S');
+    if(c.img){const s=Math.min(bw2/c.img.w,bw2/c.img.h),w2=c.img.w*s,h2=c.img.h*s;d.setDrawColor(228,228,228);d.setLineWidth(.25);d.roundedRect(M+5.5,y+3.5,bw2+1,bw2+1,2,2,'S');d.addImage(c.img.u,'JPEG',M+6+(bw2-w2)/2,y+4+(bw2-h2)/2,w2,h2)}
     d.setFont('helvetica','bold');d.setFontSize(6.6);const tg=c.tag.toUpperCase(),tw=d.getTextWidth(tg)+5;
-    d.setFillColor(0,0,0);d.roundedRect(M+6,y+3,tw,4.4,2.2,2.2,'F');d.setTextColor(255,255,255);d.text(tg,M+6+2.5,y+6.1);
-    d.setTextColor(0,0,0);d.setFontSize(D?9.5:10.5);d.text(c.name,M+6+tw+4,y+6.4);
+    d.setFillColor(0,0,0);d.roundedRect(ox,y+3,tw,4.4,2.2,2.2,'F');d.setTextColor(255,255,255);d.text(tg,ox+2.5,y+6.1);
+    d.setTextColor(0,0,0);d.setFontSize(D?9.5:10.5);d.text(c.name,ox+tw+4,y+6.4);
     d.text(c.price,M+CW-6,y+6.4,{align:'right'});
     let yy=y+(D?12.3:14.8);
     Pz.forEach(p=>{
-      d.setFont('helvetica','bold');d.setFontSize(fs);d.setTextColor(0,0,0);d.text(p.k+':',M+6,yy);
+      d.setFont('helvetica','bold');d.setFontSize(fs);d.setTextColor(0,0,0);d.text(p.k+':',ox,yy);
       d.setFont('helvetica','normal');d.setTextColor(85,85,85);
-      p.L.forEach((ln,i)=>d.text(ln,i?M+6:M+6+p.wl,yy+i*lh));
+      p.L.forEach((ln,i)=>d.text(ln,i?ox:ox+p.wl,yy+i*lh));
       yy+=p.L.length*lh+(D?1.1:1.8);
     });
-    y+=ch+(D?3:7);
+    y+=ch+(D?4.5:7);
   }
   // observações
   if(r.notes&&r.notes.length){
@@ -712,6 +714,7 @@ async function buildPDF(r){
     d.text('Lindner Agrostore - documento de apoio. Não substitui a orientação do médico-veterinário.',M,289);
     d.text('Página '+i+' de '+N,W-M,289,{align:'right'});
   }
+  if(lv<2&&N>1)return buildPDF(r,lv+1);
   return d.output('blob');
 }
 const mailMsg=()=>'CHEGOU SEU RELATÓRIO DE DOSAGEM DA LINDNER AGROSTORE: '+report.title.toUpperCase()+'\n\nATENÇÃO!!! NÃO substitui a orientação do médico-veterinário.';
@@ -722,6 +725,7 @@ async function genPDF(mode){
     await loadPdf();
     report.staff=$('#cStaff').value.trim();
     report.img=await IMG.med(medSrc(report.id));
+    if(report.comp&&report.comp.imgSrc)report.comp.img=await IMG.med(report.comp.imgSrc);
     const em=report.staff?emps.find(e=>norm(e.name)==norm(report.staff)):null;
     report.staffAv=em?await IMG.avatar(em):null;
     const blob=await buildPDF(report);
@@ -746,7 +750,7 @@ async function genPDF(mode){
 /* ---------- explicação dos remédios ---------- */
 function info(){
   const cat=sp=='cat';
-  if(cm=='top')return['O que é o Top Gard Plus?',`<p>É um <b>vermífugo</b> (remédio para vermes) em comprimido de 600 mg, da Vansil, para cães e gatos adultos.</p><ul><li><b>Combate:</b> vermes redondos (como ascarídeos e ancilóstomos) e vermes chatos, as tênias, inclusive a que é transmitida pela pulga.</li><li><b>Fórmula:</b> praziquantel 50 mg + pirantel 144 mg + febantel 150 mg em cada comprimido.</li><li><b>Dose da bula:</b> cães até 2 kg, um quarto de comprimido; de 2 a 5 kg, meio; de 5 a 10 kg, 1; acima de 10 kg, 1 comprimido a cada 10 kg. Gatos: um quarto de comprimido a cada 2 kg.</li></ul><p class="hint">Use com orientação do veterinário.</p>`];
+  if(cm=='top')return['O que é o Top Gard Plus?',`<p>É um <b>vermífugo</b> (anti-helmíntico oral 3 em 1) em comprimidos de 600 mg, da Vansil, para cães e gatos. Cada comprimido equivale a 10 kg de peso.</p><ul><li><b>Combate:</b> vermes redondos (como ascarídeos e ancilóstomos) e vermes chatos, as tênias, inclusive a que é transmitida pela pulga.</li><li><b>Fórmula:</b> praziquantel 50 mg + pirantel 144 mg + febantel 150 mg em cada comprimido.</li><li><b>Dose da bula:</b> cães até 2 kg, um quarto de comprimido; de 2 a 5 kg, meio; de 5 a 10 kg, 1; acima de 10 kg, 1 comprimido a cada 10 kg. Gatos: um quarto de comprimido a cada 2 kg.</li></ul><p class="hint">Use com orientação do veterinário.</p>`];
   return['O que é o Mellis Vet?',`<p>É um <b>anti-inflamatório e analgésico</b> da Avert, feito com <b>meloxicam</b>. Alivia a <b>dor</b>, diminui a <b>inflamação</b> e ajuda a baixar a febre.</p><ul><li><b>Para que serve:</b> controlar dor e inflamação, por exemplo depois de cirurgias.</li><li><b>Como dar:</b> 1 vez ao dia (a cada 24 horas), pela boca, pode ser junto da comida. No 1º dia a dose é maior e, nos outros dias, cai pela metade.</li><li><b>Apresentações:</b> ${cat?'para gatos só existe o 0,2 mg (10 comprimidos). Tempo máximo: 14 dias.':'para cães: 0,5, 2, 3 e 4 mg, com 10 comprimidos bissulcados (dá para partir ao meio). Tempo máximo: 13 dias.'}</li><li><b>Cuidado:</b> ${cat?'não usar em gatos com menos de 1 ano, com problemas de rim, fígado, coração, estômago ou intestino, nem desidratados.':'não usar em cães com menos de 1 ano, fêmeas gestantes ou lactantes.'} Venda com receita, e cada espécie usa a sua apresentação.</li></ul>`];
 }
 function calc(){
@@ -787,21 +791,19 @@ $('#cPdf').onclick=()=>genPDF('share');$('#cDl').onclick=()=>genPDF('dl');$('#cM
 $('#cCopy').onclick=async()=>{if(!summary)return toast('Digite o peso primeiro');try{await navigator.clipboard.writeText(summary);toast('Explicação copiada ✓')}catch{toast('Não foi possível copiar')}};
 /* ---------- remédios: pesquisa e imagens ---------- */
 const MEDS=[
- {id:'top',name:'Top Gard Plus',sub:'Vermífugo • Vansil',tags:'top gard plus vermifugo vermes verme antiparasitario vansil praziquantel pirantel febantel caes gatos',img:'top-gard-plus.png',seal:'Top vendido no verão'},
- {id:'mel',name:'Mellis Vet (Meloxicam)',sub:'Anti-inflamatório e analgésico • Avert',tags:'mellis vet meloxicam anti inflamatorio antiinflamatorio analgesico dor inflamacao febre avert caes gatos',img:'mellis-vet.png',seal:'Top vendido no verão'}];
+ {id:'top',name:'Top Gard Plus',sub:'Vermífugo 3 em 1 • Vansil',tags:'top gard plus vermifugo anti helmintico 3 em 1 vermes verme antiparasitario vansil praziquantel pirantel febantel caes gatos',img:'top-gard-plus.png',seal:'Top vendido no verão'},
+ {id:'mel',name:'Mellis Vet (Meloxicam)',sub:'Anti-inflamatório e analgésico • Avert',tags:'mellis vet meloxicam anti inflamatorio antiinflamatorio analgesico dor inflamacao febre avert caes gatos',img:'mellis-vet.jpg',seal:'Top vendido no verão'}];
 const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-const medSrc=id=>{try{const u=localStorage['mimg_'+id];if(u)return u}catch{}return MEDS.find(m=>m.id==id).img};
+const medSrc=id=>MEDS.find(m=>m.id==id).img;
 const miHTML=id=>`<span class="mi"><img src="${medSrc(id)}" alt=""></span>`;
 const fixImgs=root=>root.querySelectorAll('.mi img').forEach(i=>{i.onerror=()=>{i.parentNode.classList.add('no');i.remove()}});
 let medShown='';
 function renderMedHead(){
   const m=MEDS.find(x=>x.id==cm),key=cm+medSrc(cm).length;
   if(key==medShown)return;medShown=key;
-  $('#medHead').innerHTML=`<div class="mh">${miHTML(m.id)}<div><b>${m.name}</b><small>${m.sub}</small><small class="tap">Toque na foto para trocar</small></div></div>`;
+  $('#medHead').innerHTML=`<div class="mh">${miHTML(m.id)}<div><b>${m.name}</b><small>${m.sub}</small></div></div>`;
   fixImgs($('#medHead'));
 }
-$('#medHead').onclick=e=>{if(e.target.closest('.mi'))$('#fMed').click()};
-$('#fMed').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const u=await shrink(f,500,.82);try{localStorage['mimg_'+cm]=u;medShown='';calc()}catch{toast('Sem espaço para guardar a foto')}};
 function renderMedSearch(){
   const q=norm($('#medQ').value.trim());
   if(!q){$('#medRes').innerHTML='';return}
@@ -824,10 +826,10 @@ $('#car').onscroll=()=>{const c=$('#car'),w=c.firstElementChild?c.firstElementCh
 let carT=0;$('#car').addEventListener('touchstart',()=>{carT=Date.now()+9000},{passive:true});
 setInterval(()=>{const c=$('#car');if(Date.now()<carT||c.offsetParent===null||MEDS.length<2||!c.firstElementChild)return;const w=c.firstElementChild.offsetWidth+12,i=Math.round(c.scrollLeft/w);c.scrollTo({left:((i+1)%MEDS.length)*w,behavior:'smooth'})},4500);
 renderCar();
-const PROB={tag:'Complemente o tratamento',name:'Probiótico Pet - Avert (14 g)',price:'R$ 37,90',
+const PROB={tag:'Complemente o tratamento',name:'Probiótico Pet - Avert (14 g)',price:'R$ 37,90',imgSrc:'probiotico-pet.jpg',
  short:'Ajuda a manter a flora intestinal equilibrada durante e depois do vermífugo, em cães e gatos.',
  paras:[
-  ['O que é','suplemento alimentar em bastão, com bactérias probióticas (Enterococcus faecium e Lactobacillus acidophilus), para cães e gatos. Ajuda a manter a flora intestinal equilibrada.'],
+  ['O que é','aditivo probiótico em pasta (seringa de 14 g), com bactérias probióticas (Enterococcus faecium e Lactobacillus acidophilus), para cães e gatos. Ajuda a manter o equilíbrio da flora intestinal.'],
   ['Por que dar junto com o vermífugo','os vermes vivem no intestino e o vermífugo age ali. Em alguns animais, o intestino fica sensível e a flora de bactérias boas se desequilibra, podendo surgir fezes moles ou enjoo passageiros. O probiótico repõe bactérias benéficas e pode ajudar a digestão a se normalizar durante e depois do tratamento.'],
   ['Como dar','filhotes, gatos e cães de raças pequenas: 2 g por dia. Adultos: 4 g por dia, ou conforme a embalagem e a orientação do veterinário.']]};
 
@@ -840,8 +842,11 @@ $('#cAnimals').oninput=e=>{const c=e.target.closest('.an');if(c&&e.target.datase
 $('#cAnimals').onclick=e=>{const c=e.target.closest('.an'),b=e.target.closest('button');if(!c||!b)return;const i=+c.dataset.i;if(b.dataset.s){animals[i].sp=b.dataset.s;renderAnimals();calc()}else if(b.dataset.a=='rm'){animals.splice(i,1);renderAnimals();calc()}};
 $('#aAdd').onclick=()=>{animals.push({name:'',sp:'dog',w:''});renderAnimals();calc();const l=$$('#cAnimals .an');l[l.length-1].querySelector('input').focus()};
 function calcTop(){
+  const addMc=(d,m)=>{const x=new Date(d.getFullYear(),d.getMonth()+m,1);x.setDate(Math.min(d.getDate(),new Date(x.getFullYear(),x.getMonth()+1,0).getDate()));return x};
   const kg=g('#tKg')||10,box=g('#tBox')||4,n=Math.max(1,Math.round(g('#tN'))||1),gap=Math.max(1,Math.round(g('#tGap'))||15);
   const ds=[...Array(n)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i*gap);return[i?'Daqui a '+(i*gap)+' dias':'Hoje',dmy(d)]});
+  const lastD=new Date();lastD.setDate(lastD.getDate()+(n-1)*gap);
+  const nxD=addMc(lastD,6),nxt=dmy(nxD),nxw=nxD.toLocaleDateString('pt-BR',{weekday:'long'});
   const L=animals.map(a=>({a,w:parseFloat(String(a.w).replace(',','.'))})).filter(x=>x.w>0);
   if(!L.length){$('#cOut').innerHTML='<div class="empty">Digite o peso do animal</div>';return}
   let h='',tot=0,txt='Top Gard Plus - Lindner Agrostore\n';const R=[];
@@ -849,18 +854,18 @@ function calcTop(){
     const cat=a.sp=='cat',t=cat?Math.ceil(w/2)/4:(kg==10&&w<=10?(w<=2?.25:w<=5?.5:1):Math.ceil(w/kg*2)/2);
     tot+=t*n;
     const nm=a.name.trim(),lab=(cat?'Gato':'Cachorro')+' - '+nf(w)+' kg';
-    h+=`<div class="res"><h3><span>${nm?esc(nm)+'<small>'+lab+'</small>':lab}</span></h3><div class="hd" style="margin-top:8px"><div><div class="big">${pl(t)}</div><p style="margin-top:2px">por vez</p></div><div class="pills">${pills(t,'c',1.1)}</div></div><div class="steps">${ds.map(x=>`<div class="st"><b>${x[0]}<br><small style="color:var(--mut);font-weight:400">${x[1]}</small></b><span class="sp"><span class="pills">${pills(t,'c',.55,6)}</span><b style="color:#fff">${pl(t)}</b></span></div>`).join('')}</div></div>`;
-    R.push({title:nm||lab,sub:nm?lab:'',rows:ds.map(x=>({l:x[0],sub:x[1],n:t,k:'c'}))});
+    h+=`<div class="res"><h3><span>${nm?esc(nm)+'<small>'+lab+'</small>':lab}</span></h3><div class="hd" style="margin-top:8px"><div><div class="big">${pl(t)}</div><p style="margin-top:2px">por vez</p></div><div class="pills">${pills(t,'c',1.1)}</div></div><div class="steps">${ds.map(x=>`<div class="st"><b>${x[0]}<br><small style="color:var(--mut);font-weight:400">${x[1]}</small></b><span class="sp"><span class="pills">${pills(t,'c',.55,6)}</span><b style="color:#fff">${pl(t)}</b></span></div>`).join('')}<div class="st"><b>Próximo tratamento<br><small style="color:var(--mut);font-weight:400">Só daqui a 6 meses</small></b><span class="sp"><b style="color:#fff">${nxt}</b></span></div></div></div>`;
+    R.push({title:nm||lab,sub:nm?lab:'',rows:ds.map(x=>({l:x[0],sub:x[1],n:t,k:'c'})).concat([{l:'Próximo tratamento',sub:'Daqui a 6 meses',n:t,k:'c',next:true,date:nxt}])});
     txt+='\n'+(nm?nm+' ('+lab+')':lab)+': '+pl(t)+' por vez\n'+ds.map(x=>'- '+x[0]+' ('+x[1]+')').join('\n')+'\n';
   });
   const bx=Math.ceil(tot/box),left=bx*box-tot;
-  h+=`<div class="res best"><h3>Resumo para levar${L.length>1?' ('+L.length+' animais)':''}</h3><p>Total do tratamento: <b>${pl(tot)}</b><br>Levar: <b>${cx(bx)}</b> (cada caixa vem com ${nf(box)})</p>${left?`<p class="keep">Sobram <b>${pl(left)}</b> na caixa. Guarde para o reforço, daqui a uns 3 ou 6 meses.</p>`:''}</div>`;
-  h+=`<div class="res"><h3><span>Sugestão<small>${PROB.name} - ${PROB.price}</small></span></h3><p>${PROB.short}</p><p class="hint" style="margin:6px 0 0">O PDF explica o porquê e como usar.</p></div>`;
+  h+=`<div class="res best"><h3>Resumo para levar${L.length>1?' ('+L.length+' animais)':''}</h3><p>Total do tratamento: <b>${pl(tot)}</b><br>Levar: <b>${cx(bx)}</b> (cada caixa vem com ${nf(box)})</p>${left?`<p class="keep">Sobram <b>${pl(left)}</b> na caixa. Guarde para o próximo tratamento, daqui a 6 meses (${nxt}).</p>`:''}</div>`;
+  h+=`<div class="res"><div style="display:flex;gap:12px;align-items:center"><span class="mi"><img src="${PROB.imgSrc}" alt=""></span><div><b style="font-size:14px">Sugestão: ${PROB.name}</b><small style="display:block;color:var(--mut);margin-top:2px">${PROB.price}</small></div></div><p>${PROB.short}</p><p class="hint" style="margin:6px 0 0">O PDF explica o porquê e como usar.</p></div>`;
   txt+='\nSugestão: '+PROB.name+' - '+PROB.price+'\n';
-  txt+='\nTotal: '+pl(tot)+' = '+cx(bx)+(left?'\nSobram '+pl(left)+' para o reforço (daqui a 3 ou 6 meses)':'');
+  txt+='\nTotal: '+pl(tot)+' = '+cx(bx)+'\nPróximo tratamento: só daqui a 6 meses, '+nxw+', '+nxt+(left?'\nSobram '+pl(left)+' para o próximo tratamento':'');
   summary=txt;
-  report={id:'top',title:'Top Gard Plus',desc:'Vermífugo (praziquantel + pirantel + febantel) em comprimido de 600 mg, da Vansil. Combate vermes redondos e tênias em cães e gatos adultos.',animals:R,comp:PROB,totalsTitle:'Resumo para levar',
-    totals:[['Animais',String(L.length)],['Aplicações',n+(n>1?' vezes (a cada '+gap+' dias)':' vez')],['Total de comprimidos',pl(tot)],['Caixas a levar',cx(bx)+' ('+nf(box)+' comprimidos cada)']].concat(left?[['Sobram na caixa',pl(left)+' - guardar para o reforço (daqui a 3 ou 6 meses)']]:[]),
+  report={id:'top',title:'Top Gard Plus',desc:'Vermífugo (praziquantel + pamoato de pirantel + febantel) em comprimido de 600 mg, da Vansil. Combate vermes redondos e tênias em cães e gatos adultos.',animals:R,comp:{...PROB},totalsTitle:'Resumo para levar',
+    totals:[['Animais',String(L.length)],['Aplicações',n+(n>1?' vezes (a cada '+gap+' dias)':' vez')],['Total de comprimidos',pl(tot)],['Caixas a levar',cx(bx)+' ('+nf(box)+' comprimidos cada)']].concat([['Próximo tratamento','Só daqui a 6 meses: '+nxw+', '+nxt]]).concat(left?[['Sobram na caixa',pl(left)+' - guardar para o próximo tratamento']]:[]),
     notes:['Dose conforme a bula: cães até 2 kg, um quarto de comprimido; de 2 a 5 kg, meio; de 5 a 10 kg, 1; acima de 10 kg, 1 comprimido a cada 10 kg. Gatos: um quarto de comprimido a cada 2 kg.','Em caso de dúvida, consulte o médico-veterinário.']};
   $('#cOut').innerHTML=h;
 }

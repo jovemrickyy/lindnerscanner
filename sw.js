@@ -1,5 +1,5 @@
-const C='lindner-v24';
-const A=['./','./index.html','./logo.png','./manifest.json','./icon-192.png','./icon-512.png','./firebase-config.js','./jspdf.umd.min.js','./top-gard-plus.png','./mellis-vet.png'];
+const C='lindner-v25';
+const A=['./','./index.html','./logo.png','./manifest.json','./icon-192.png','./icon-512.png','./firebase-config.js','./jspdf.umd.min.js','./top-gard-plus.png','./mellis-vet.jpg','./probiotico-pet.jpg'];
 self.addEventListener('install',e=>{
   // cada arquivo é guardado separadamente: se algum faltar, a instalação NÃO falha
   e.waitUntil(caches.open(C).then(c=>Promise.all(A.map(u=>c.add(u).catch(()=>{})))));
