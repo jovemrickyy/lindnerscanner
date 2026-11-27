@@ -160,6 +160,27 @@ img{-webkit-user-drag:none}
 .opts{margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;animation:in .35s var(--ease) both}
 .opt{display:flex;align-items:center;gap:12px;width:100%;padding:10px 14px;background:none;text-align:left;font-size:14px;border-bottom:1px solid var(--line)}
 .opt:last-child{border:0}.opt:active{background:#1a1a1a}
+.mi{width:60px;height:60px;border-radius:14px;background:#151515;border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mi img{width:100%;height:100%;object-fit:cover}.mi.no::after{content:'+';font-size:26px;color:var(--mut)}
+.mh{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;margin-top:12px;animation:in .4s var(--ease) both}
+.mh .mi{width:68px;height:68px;cursor:pointer}
+.mh b,.mr b{display:block;font-size:15px;font-weight:600}.mh small,.mr small{display:block;font-size:12px;color:var(--mut);margin-top:2px}
+.mh .tap{font-size:10px;color:#666;margin-top:6px}
+.mr{display:flex;gap:12px;align-items:center;width:100%;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin-bottom:8px;text-align:left;animation:in .3s var(--ease) both}
+.mr .mi{width:52px;height:52px}
+#bell{position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top));z-index:90;max-width:520px;margin:auto;background:#fff;color:#000;border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;box-shadow:0 10px 40px rgba(255,255,255,.2);animation:drop .5s var(--ease) both}
+#bell b{font-size:14px}#bell span{font-size:13px}
+@keyframes drop{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:none}}
+.car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 2px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.car::-webkit-scrollbar{display:none}
+.cc{flex:0 0 84%;max-width:340px;scroll-snap-align:center;position:relative;display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px 16px 16px;text-align:left;transition:transform .3s var(--ease)}
+.cc:active{transform:scale(.97)}
+.cc .mi{width:92px;height:92px;border-radius:18px}
+.cc b{display:block;font-size:16px;font-weight:600;line-height:1.25}.cc small{display:block;font-size:12px;color:var(--mut);margin-top:3px}
+.cc .go{display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:#000;background:#fff;border-radius:99px;padding:6px 14px}
+.seal{position:absolute;top:-9px;left:14px;background:#fff;color:#000;border-radius:99px;padding:5px 11px 5px 8px;font-size:10px;font-weight:700;letter-spacing:.4px;display:flex;align-items:center;gap:5px;text-transform:uppercase;box-shadow:0 4px 18px rgba(255,255,255,.18)}
+.seal svg{width:13px;height:13px}
+.dots{display:flex;gap:6px;justify-content:center;margin:2px 0 14px}.dots i{width:6px;height:6px;border-radius:50%;background:#333;transition:all .35s var(--ease)}.dots i.on{width:18px;border-radius:6px;background:#fff}
 </style></head><body>
 <div id="splash">
   <div class="sw" id="sw">
@@ -211,7 +232,17 @@ img{-webkit-user-drag:none}
   <div id="list"></div></section>
 
 <section id="tab-calc" class="hide">
+  <div id="calcHome">
+  <input class="search" id="medQ" placeholder="Pesquisar remédio (ex: top gard, mellis, meloxicam)" autocomplete="off">
+  <div id="medRes"></div>
+  <h4 class="sh" id="topTit" style="margin-top:6px">Mais vendidos</h4>
+  <div class="car" id="car"></div>
+  <div class="dots" id="dots"></div>
+  </div>
+  <div id="calcBody" class="hide">
+  <button class="ghost" id="backHome" style="margin-bottom:12px">← Todos os remédios</button>
   <div class="seg"><button class="on" data-m="top">Top Gard Plus</button><button data-m="mel">Meloxicam</button></div>
+  <div id="medHead"></div>
   <div class="seg hide" id="spSeg" style="margin-top:12px"><button class="on" data-s="dog">Cachorro</button><button data-s="cat">Gato</button></div>
   <details class="adv" id="info" open><summary id="infoT" style="color:#fff;font-weight:500"></summary><div id="infoB"></div></details>
   <div id="wBox" class="hide"><label class="lbl">Quanto o animal pesa? (kg)</label>
@@ -246,9 +277,11 @@ img{-webkit-user-drag:none}
   <div class="row" style="margin-top:8px"><button class="btn" id="cMail">Enviar por e-mail</button></div>
   <div class="row" style="margin-top:8px"><button class="btn" id="cDl">Baixar PDF</button><button class="btn" id="cCopy">Copiar texto</button></div>
   <p class="hint" style="margin-top:14px">Cálculo de apoio ao balcão. Confira sempre a bula e a receita do veterinário. Os desenhos dos comprimidos são ilustrativos.</p>
+  </div>
 </section>
 
 <section id="tab-chk" class="hide">
+  <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="ghost" id="nOpen">Notificações e lembretes</button></div>
   <div class="prog"><div id="pBar"></div></div>
   <p class="hint" id="pTxt"></p>
   <div class="chips" id="chips"></div>
@@ -308,6 +341,18 @@ img{-webkit-user-drag:none}
     <div class="row" style="margin-top:0"><button class="btn" id="dCam">Tirar foto</button><button class="btn" id="dPhoto">Galeria</button></div>
     <div class="row"><button class="btn" id="dCancel">Cancelar</button><button class="btn main" id="dOk">Concluir</button></div>
   </div>
+  <div id="vNotif" class="hide">
+    <h2>Notificações e lembretes</h2>
+    <p class="hint" id="nStatus"></p>
+    <div class="row" style="margin-top:8px"><button class="btn main" id="nEnable">Ativar lembretes</button></div>
+    <label class="cb"><input type="checkbox" id="nSound" checked> Tocar som de bip</label>
+    <label class="lbl">Este celular é de</label>
+    <select class="inp" id="nWho"></select>
+    <label class="lbl">Avisar antes do horário limite</label>
+    <select class="inp" id="nPre"><option value="0">Só na hora</option><option value="5">5 minutos antes</option><option value="10">10 minutos antes</option><option value="15">15 minutos antes</option><option value="30">30 minutos antes</option></select>
+    <div class="row"><button class="btn" id="nTest">Testar bip</button><button class="btn main" id="nSave">Salvar</button></div>
+    <p class="hint" style="margin-top:12px">Os lembretes avisam tarefas que têm horário limite e ainda não foram feitas: antes do horário, na hora e depois, se estiver atrasada. Funcionam com o app aberto ou em segundo plano. Com o app totalmente fechado o celular pode não avisar.</p>
+  </div>
 </div>
 
 <div id="login">
@@ -317,10 +362,11 @@ img{-webkit-user-drag:none}
   <p class="hint" id="lErr" style="color:var(--red)"></p>
   <div class="row"><button class="btn main" id="lGo">Entrar</button></div>
 </div>
-<input type="file" accept="image/*" capture="environment" id="fProdCam" hidden><input type="file" accept="image/*" capture="user" id="fAvatarCam" hidden><input type="file" accept="image/*" capture="environment" id="fProofCam" hidden><input type="file" accept="image/*" id="fProd" hidden><input type="file" accept="image/*" id="fAvatar" hidden><input type="file" accept="image/*" id="fProof" hidden>
+<input type="file" accept="image/*" capture="environment" id="fProdCam" hidden><input type="file" accept="image/*" capture="user" id="fAvatarCam" hidden><input type="file" accept="image/*" capture="environment" id="fProofCam" hidden><input type="file" accept="image/*" id="fMed" hidden><input type="file" accept="image/*" id="fProd" hidden><input type="file" accept="image/*" id="fAvatar" hidden><input type="file" accept="image/*" id="fProof" hidden>
 <div id="viewer" class="hide"><img id="vImg"></div>
 <div id="pdlg" class="hide"><div class="box"><p id="pMsg"></p><input class="inp pw" id="pIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore placeholder="Digite a senha"><p class="hint lt" id="pErr"></p><div class="row" style="margin-top:8px"><button class="btn" id="pNo">Cancelar</button><button class="btn main" id="pYes">Confirmar</button></div></div></div>
 <div id="dlg" class="hide"><div class="box"><p id="dMsg"></p><div class="row"><button class="btn" id="dNo">Cancelar</button><button class="btn main" id="dYes">Excluir</button></div></div></div>
+<div id="bell" class="hide"><b id="bTit"></b><span id="bTxt"></span></div>
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -389,7 +435,7 @@ $('#q').oninput=render;
 /* ---------- sheet ---------- */
 const open=()=>{$('#bg').classList.add('on');$('#sheet').classList.add('on')};
 const close=()=>{stopCam();$('#bg').classList.remove('on');$('#sheet').classList.remove('on')};
-const view=v=>['scan','form','emp','done'].forEach(k=>$('#v'+k[0].toUpperCase()+k.slice(1)).classList.toggle('hide',k!=v));
+const view=v=>['scan','form','emp','done','notif'].forEach(k=>$('#v'+k[0].toUpperCase()+k.slice(1)).classList.toggle('hide',k!=v));
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2600)}
 $('#bg').onclick=close;$('#cancel1').onclick=close;
 $('#fab').onclick=()=>{editId=null;open();startScan()};
@@ -530,35 +576,78 @@ const svg2png=p=>new Promise(res=>{
 });
 const pillImgs=async(n,k)=>{const w=Math.floor(n),m=+(n%1).toFixed(2),P=PL[k],L=[];for(let i=0;i<Math.min(w,8);i++)L.push(P.f);if(m)L.push(m<.4?P.q:m<.7?P.h:P.t);return{imgs:(await Promise.all(L.map(svg2png))).filter(Boolean),more:w>8?w-8:0}};
 const logoData=()=>new Promise(res=>{const im=new Image();im.onload=()=>{try{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext('2d');x.drawImage(im,0,0);x.globalCompositeOperation='source-in';x.fillStyle='#000';x.fillRect(0,0,c.width,c.height);res(c.toDataURL('image/png'))}catch{res(null)}};im.onerror=()=>res(null);im.src=document.querySelector('header img').src});
-const IMG={logo:logoData,pill:pillImgs};
+const loadMedImg=src=>new Promise(res=>{const im=new Image();im.onload=()=>{try{const s=Math.min(1,700/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res({u:c.toDataURL('image/jpeg',.88),w:c.width,h:c.height})}catch{res(null)}};im.onerror=()=>res(null);im.src=src});
+const avatarPNG=emp=>new Promise(res=>{
+  const S=200,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d'),col=emp.color||'#555';
+  const fin=img=>{
+    x.clearRect(0,0,S,S);x.save();x.beginPath();x.arc(S/2,S/2,S/2-9,0,7);x.clip();
+    if(img){const s=Math.max(S/img.width,S/img.height),w=img.width*s,hh=img.height*s;x.drawImage(img,(S-w)/2,(S-hh)/2,w,hh)}
+    else{x.fillStyle=col;x.fillRect(0,0,S,S);x.fillStyle='#000';x.font='bold 100px Helvetica,Arial,sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText((emp.name||'?')[0].toUpperCase(),S/2,S/2+6)}
+    x.restore();
+    x.beginPath();x.arc(S/2,S/2,S/2-5,0,7);x.lineWidth=10;x.strokeStyle=col;x.stroke();
+    x.beginPath();x.arc(S/2,S/2,S/2-1,0,7);x.lineWidth=2;x.strokeStyle='#222';x.stroke();
+    try{res(c.toDataURL('image/png'))}catch{res(null)}
+  };
+  if(emp.photo){const im=new Image();im.onload=()=>fin(im);im.onerror=()=>fin(null);im.src=emp.photo}else fin(null);
+});
+const IMG={logo:logoData,pill:pillImgs,med:loadMedImg,avatar:avatarPNG};
+const PK={c:48,r:48,o:40};
+const wrapInline=(d,t,w1,w)=>{const L=[];let cur='',lim=w1;for(const x of t.split(/\s+/)){const tt=cur?cur+' '+x:x;if(d.getTextWidth(tt)>lim&&cur){L.push(cur);cur=x;lim=w}else cur=tt}if(cur)L.push(cur);return L};
 async function buildPDF(r){
   const{jsPDF}=window.jspdf,d=new jsPDF({unit:'mm',format:'a4'}),W=210,M=14,CW=W-2*M;
+  const nA=r.animals.length,CP=nA>=2,D=nA>=3;
   const logo=await IMG.logo(),now=new Date();
   const stamp=now.toLocaleDateString('pt-BR')+' às '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   let y=0;
   const head=first=>{
-    const hh=first?38:20;
+    const hh=first?(D?34:38):20;
     if(first){
-      if(logo)d.addImage(logo,'PNG',M,6,24,24,'logo','FAST');
-      d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(19);d.text('Relatório de dosagem',M+30,16);
-      d.setFont('helvetica','normal');d.setFontSize(10);d.setTextColor(90,90,90);d.text('Lindner Agrostore  |  Pet Shop',M+30,22.5);
-      if(r.staff){d.setFontSize(9.5);d.setTextColor(0,0,0);d.text('Atendido por: '+String(r.staff).slice(0,40),M+30,28.5)}
-      d.setFontSize(9);d.setTextColor(90,90,90);d.text('Emitido em '+stamp,W-M,16,{align:'right'});
-      d.setFontSize(8.3);d.text(d.splitTextToSize('FILIAL 3, Estrada João de Oliveira Remião 2813 (PDA7)',80),W-M,21.5,{align:'right'});
+      const LG=D?20:24,tx0=M+LG+6,ty=D?14.5:16,sy=D?20.3:22.5,ey=D?26.3:28.5;
+      if(logo)d.addImage(logo,'PNG',M,D?5.5:6,LG,LG,'logo','FAST');
+      d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(D?17:19);d.text('Relatório de dosagem',tx0,ty);
+      d.setFont('helvetica','normal');d.setFontSize(D?9.5:10);d.setTextColor(90,90,90);d.text('Lindner Agrostore  |  Pet Shop',tx0,sy);
+      if(r.staff){
+        let sx=tx0;
+        if(r.staffAv){const av=D?7:8;d.addImage(r.staffAv,'PNG',sx,ey-av+1.8,av,av,'avatar','FAST');sx+=av+3}
+        d.setFont('helvetica','normal');d.setFontSize(9.5);d.setTextColor(0,0,0);d.text('Atendido por: '+String(r.staff).slice(0,40),sx,ey);
+      }
+      d.setFont('helvetica','normal');d.setFontSize(9);d.setTextColor(90,90,90);d.text('Emitido em '+stamp,W-M,ty,{align:'right'});
+      d.setFontSize(8.3);d.text(d.splitTextToSize('FILIAL 3, Estrada João de Oliveira Remião 2813 (PDA7)',80),W-M,ty+5.5,{align:'right'});
     }else{
       if(logo)d.addImage(logo,'PNG',M,5,11,11,'logo','FAST');
       d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(11);d.text('Relatório de dosagem',M+15,12.5);
     }
     d.setDrawColor(0,0,0);d.setLineWidth(.45);d.line(M,hh-1,W-M,hh-1);
-    y=hh+12;
+    y=hh+(D?9:12);
   };
   const need=h=>{if(y+h>276){d.addPage();head(false)}};
   head(true);
-  d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(17);d.text(r.title,M,y);y+=6.5;
-  d.setFont('helvetica','normal');d.setFontSize(9.5);d.setTextColor(110,110,110);
-  const ds=d.splitTextToSize(r.desc,CW);d.text(ds,M,y);y+=ds.length*4.4+6;
+  // remédio (imagem ao lado do nome)
+  let tx=M;const bw=D?20:26;
+  if(r.img){const s=Math.min(bw/r.img.w,bw/r.img.h),iw=r.img.w*s,ih=r.img.h*s;d.setDrawColor(225,225,225);d.setLineWidth(.3);d.roundedRect(M-.5,y-7,bw+1,bw+1,2,2,'S');d.addImage(r.img.u,'JPEG',M+(bw-iw)/2,y-6.5+(bw-ih)/2,iw,ih);tx=M+bw+7}
+  d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(D?15:17);d.text(r.title,tx,y);
+  d.setFont('helvetica','normal');d.setFontSize(D?8.6:9.5);d.setTextColor(110,110,110);
+  const dl=D?3.9:4.4,ds=d.splitTextToSize(r.desc,CW-(tx-M));d.text(ds,tx,y+(D?5.8:6.5));
+  y=Math.max(y+(D?5.8:6.5)+ds.length*dl,r.img?y+bw-5:0)+(D?6:8);
+  // animais
   for(const a of r.animals){
     for(const row of a.rows)row.p=await IMG.pill(row.n,row.k);
+    if(CP){
+      const ch=D?17.5:21;need(ch+3);
+      d.setFillColor(244,244,244);d.roundedRect(M,y,CW,ch,2.5,2.5,'F');d.setFillColor(0,0,0);d.roundedRect(M,y,2.2,ch,1,1,'F');
+      const ttl=String(a.title).slice(0,42);
+      d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(11);d.text(ttl,M+7,y+(D?6.2:6.6));
+      if(a.sub){const tw=d.getTextWidth(ttl);d.setFont('helvetica','normal');d.setFontSize(8.8);d.setTextColor(110,110,110);d.text(a.sub,M+7+tw+3,y+(D?6.2:6.6))}
+      const r0=a.rows[0],P=r0.p,cy=y+ch-(D?6.1:6.6),gp=1.8,units=P.imgs.reduce((s,i)=>s+i.w,0);
+      const s=Math.min((D?5.8:6.6)/PK[r0.k],(56-gp*Math.max(0,P.imgs.length-1))/Math.max(units,1));
+      let x=M+7;
+      P.imgs.forEach(im=>{const wm=im.w*s,hm=im.h*s;d.addImage(im.u,'PNG',x,cy-hm/2,wm,hm,'p'+im.w+'x'+im.h+im.u.length,'FAST');x+=wm+gp});
+      if(P.more){d.setFont('helvetica','normal');d.setFontSize(8.5);d.setTextColor(90,90,90);d.text('+'+P.more,x,cy+1)}
+      d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(9.5);d.text(pl(r0.n)+' por vez',x+2.5,cy+1.2);
+      const sched=a.rows.map(rr=>(rr.l=='Hoje'?'Hoje':rr.l.replace('Daqui a ','+').replace(' dias','d'))+' '+String(rr.sub).slice(0,5)).join('   |   ');
+      d.setFont('helvetica','normal');d.setFontSize(8.2);d.setTextColor(100,100,100);d.text(sched,M+CW-4,cy+1.2,{align:'right'});
+      y+=ch+(D?2.2:3.5);continue;
+    }
     const RH=13,h=15+a.rows.length*RH+3;need(h+4);
     d.setFillColor(244,244,244);d.roundedRect(M,y,CW,h,3,3,'F');
     d.setFillColor(0,0,0);d.roundedRect(M,y,2.4,h,1.2,1.2,'F');
@@ -578,18 +667,43 @@ async function buildPDF(r){
     });
     y+=h+5;
   }
-  d.setFont('helvetica','bold');d.setFontSize(10);
-  const T=r.totals.map(([k,v])=>({k,v:d.splitTextToSize(String(v),CW-72)}));
-  const th=16+T.reduce((s,t)=>s+t.v.length*4.8+3.4,0);need(th+4);
+  // resumo
+  d.setFont('helvetica','bold');d.setFontSize(D?9.2:10);
+  const T=r.totals.map(([k,v])=>({k,v:d.splitTextToSize(String(v),CW-(D?66:72))}));
+  const st=D?4.1:4.8,sg=D?2.3:3.4,th=(D?13:16)+T.reduce((s,t)=>s+t.v.length*st+sg,0);need(th+4);
   d.setDrawColor(0,0,0);d.setLineWidth(.35);d.roundedRect(M,y,CW,th,3.5,3.5,'S');
-  d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(12);d.text(r.totalsTitle||'Resumo para levar',M+7,y+10);
-  let ty=y+18;
-  T.forEach(t=>{d.setFont('helvetica','normal');d.setFontSize(9);d.setTextColor(110,110,110);d.text(t.k,M+7,ty);d.setFont('helvetica','bold');d.setFontSize(10);d.setTextColor(0,0,0);d.text(t.v,M+65,ty);ty+=t.v.length*4.8+3.4});
-  y+=th+9;
+  d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(D?11:12);d.text(r.totalsTitle||'Resumo para levar',M+7,y+(D?8:10));
+  let ty=y+(D?14.5:18);
+  T.forEach(t=>{d.setFont('helvetica','normal');d.setFontSize(D?8.2:9);d.setTextColor(110,110,110);d.text(t.k,M+7,ty);d.setFont('helvetica','bold');d.setFontSize(D?9.2:10);d.setTextColor(0,0,0);d.text(t.v,M+(D?58:65),ty);ty+=t.v.length*st+sg});
+  y+=th+(D?4:9);
+  // complemento (ex.: probiótico junto com o vermífugo)
+  if(r.comp){
+    const c=r.comp,fs=D?7.8:8.6,lh=D?3.55:4.1,iw=CW-12;
+    d.setFont('helvetica','normal');d.setFontSize(fs);
+    const Pz=c.paras.map(([k,t])=>{d.setFont('helvetica','bold');const wl=d.getTextWidth(k+': ');d.setFont('helvetica','normal');return{k,wl,L:wrapInline(d,t,iw-wl,iw)}});
+    const ch=(D?11:13.5)+Pz.reduce((s,p)=>s+p.L.length*lh+(D?1.1:1.8),0)+1.5;need(ch+3);
+    d.setDrawColor(185,185,185);d.setLineWidth(.3);d.roundedRect(M,y,CW,ch,3,3,'S');
+    d.setFont('helvetica','bold');d.setFontSize(6.6);const tg=c.tag.toUpperCase(),tw=d.getTextWidth(tg)+5;
+    d.setFillColor(0,0,0);d.roundedRect(M+6,y+3,tw,4.4,2.2,2.2,'F');d.setTextColor(255,255,255);d.text(tg,M+6+2.5,y+6.1);
+    d.setTextColor(0,0,0);d.setFontSize(D?9.5:10.5);d.text(c.name,M+6+tw+4,y+6.4);
+    d.text(c.price,M+CW-6,y+6.4,{align:'right'});
+    let yy=y+(D?12.3:14.8);
+    Pz.forEach(p=>{
+      d.setFont('helvetica','bold');d.setFontSize(fs);d.setTextColor(0,0,0);d.text(p.k+':',M+6,yy);
+      d.setFont('helvetica','normal');d.setTextColor(85,85,85);
+      p.L.forEach((ln,i)=>d.text(ln,i?M+6:M+6+p.wl,yy+i*lh));
+      yy+=p.L.length*lh+(D?1.1:1.8);
+    });
+    y+=ch+(D?3:7);
+  }
+  // observações
   if(r.notes&&r.notes.length){
-    need(12);d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(10);d.text('Observações',M,y);y+=5.5;
-    d.setFont('helvetica','normal');d.setFontSize(8.8);d.setTextColor(95,95,95);
-    r.notes.forEach(n=>{const L=d.splitTextToSize('- '+n,CW);need(L.length*4+2);d.text(L,M,y);y+=L.length*4+1.5});
+    if(D){d.setFont('helvetica','normal');d.setFontSize(7.4);d.setTextColor(110,110,110);r.notes.forEach(n=>{const L=d.splitTextToSize('- '+n,CW);need(L.length*3.2+1);d.text(L,M,y);y+=L.length*3.2+1})}
+    else{
+      need(12);d.setTextColor(0,0,0);d.setFont('helvetica','bold');d.setFontSize(10);d.text('Observações',M,y);y+=5.5;
+      d.setFont('helvetica','normal');d.setFontSize(8.8);d.setTextColor(95,95,95);
+      r.notes.forEach(n=>{const L=d.splitTextToSize('- '+n,CW);need(L.length*4+2);d.text(L,M,y);y+=L.length*4+1.5});
+    }
   }
   const N=d.getNumberOfPages();
   for(let i=1;i<=N;i++){
@@ -607,6 +721,9 @@ async function genPDF(mode){
   try{
     await loadPdf();
     report.staff=$('#cStaff').value.trim();
+    report.img=await IMG.med(medSrc(report.id));
+    const em=report.staff?emps.find(e=>norm(e.name)==norm(report.staff)):null;
+    report.staffAv=em?await IMG.avatar(em):null;
     const blob=await buildPDF(report);
     const name='Lindner-'+(report.id=='top'?'TopGardPlus':'MellisVet')+'-'+today()+'.pdf';
     const file=new File([blob],name,{type:'application/pdf'});
@@ -634,7 +751,7 @@ function info(){
 }
 function calc(){
   const w=g('#cW');summary='';report=null;
-  const[it,ib]=info();$('#infoT').textContent=it;$('#infoB').innerHTML=ib;
+  const[it,ib]=info();$('#infoT').textContent=it;$('#infoB').innerHTML=ib;renderMedHead();
   $$('#dayChips .chip').forEach(c=>c.classList.toggle('on',+c.dataset.d==g('#mD')));
   if(cm=='top'){calcTop();return}
   if(!(w>0)){$('#cOut').innerHTML='<div class="empty">Digite o peso do animal lá em cima</div>';return}
@@ -657,7 +774,7 @@ function calc(){
   }
   $('#cOut').innerHTML=h;
 }
-$$('#tab-calc>.seg:not(#spSeg) button').forEach(b=>b.onclick=()=>{cm=b.dataset.m;$$('#tab-calc>.seg:not(#spSeg) button').forEach(x=>x.classList.toggle('on',x==b));$('#cTop').classList.toggle('hide',cm!='top');$('#cMel').classList.toggle('hide',cm!='mel');$('#spSeg').classList.toggle('hide',cm=='top');$('#wBox').classList.toggle('hide',cm=='top');calc()});
+$$('#calcBody>.seg:not(#spSeg) button').forEach(b=>b.onclick=()=>{cm=b.dataset.m;$$('#calcBody>.seg:not(#spSeg) button').forEach(x=>x.classList.toggle('on',x==b));$('#cTop').classList.toggle('hide',cm!='top');$('#cMel').classList.toggle('hide',cm!='mel');$('#spSeg').classList.toggle('hide',cm=='top');$('#wBox').classList.toggle('hide',cm=='top');calc()});
 $$('#tab-calc input').forEach(i=>i.oninput=calc);
 $$('#spSeg button').forEach(b=>b.onclick=()=>{sp=b.dataset.s;$$('#spSeg button').forEach(x=>x.classList.toggle('on',x==b));const c=sp=='cat';$('#mA').value=c?'0,1':'0,2';$('#mB').value=c?'0,05':'0,1';$('#dMax').dataset.d=c?14:13;$('#dMax').textContent=(c?14:13)+' dias (máx.)';calc()});
 $('#dayChips').onclick=e=>{const c=e.target.closest('.chip');if(c){$('#mD').value=c.dataset.d;calc()}};
@@ -668,6 +785,52 @@ $('#staffArr').onclick=()=>staffToggle();
 $('#staffOpts').onclick=e=>{const b=e.target.closest('.opt');if(b){$('#cStaff').value=b.dataset.n;staffToggle(false)}};
 $('#cPdf').onclick=()=>genPDF('share');$('#cDl').onclick=()=>genPDF('dl');$('#cMail').onclick=()=>genPDF('mail');
 $('#cCopy').onclick=async()=>{if(!summary)return toast('Digite o peso primeiro');try{await navigator.clipboard.writeText(summary);toast('Explicação copiada ✓')}catch{toast('Não foi possível copiar')}};
+/* ---------- remédios: pesquisa e imagens ---------- */
+const MEDS=[
+ {id:'top',name:'Top Gard Plus',sub:'Vermífugo • Vansil',tags:'top gard plus vermifugo vermes verme antiparasitario vansil praziquantel pirantel febantel caes gatos',img:'top-gard-plus.png',seal:'Top vendido no verão'},
+ {id:'mel',name:'Mellis Vet (Meloxicam)',sub:'Anti-inflamatório e analgésico • Avert',tags:'mellis vet meloxicam anti inflamatorio antiinflamatorio analgesico dor inflamacao febre avert caes gatos',img:'mellis-vet.png',seal:'Top vendido no verão'}];
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const medSrc=id=>{try{const u=localStorage['mimg_'+id];if(u)return u}catch{}return MEDS.find(m=>m.id==id).img};
+const miHTML=id=>`<span class="mi"><img src="${medSrc(id)}" alt=""></span>`;
+const fixImgs=root=>root.querySelectorAll('.mi img').forEach(i=>{i.onerror=()=>{i.parentNode.classList.add('no');i.remove()}});
+let medShown='';
+function renderMedHead(){
+  const m=MEDS.find(x=>x.id==cm),key=cm+medSrc(cm).length;
+  if(key==medShown)return;medShown=key;
+  $('#medHead').innerHTML=`<div class="mh">${miHTML(m.id)}<div><b>${m.name}</b><small>${m.sub}</small><small class="tap">Toque na foto para trocar</small></div></div>`;
+  fixImgs($('#medHead'));
+}
+$('#medHead').onclick=e=>{if(e.target.closest('.mi'))$('#fMed').click()};
+$('#fMed').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const u=await shrink(f,500,.82);try{localStorage['mimg_'+cm]=u;medShown='';calc()}catch{toast('Sem espaço para guardar a foto')}};
+function renderMedSearch(){
+  const q=norm($('#medQ').value.trim());
+  if(!q){$('#medRes').innerHTML='';return}
+  const tk=q.split(/\s+/),L=MEDS.filter(m=>{const s=norm(m.name+' '+m.tags);return tk.every(t=>s.includes(t))});
+  $('#medRes').innerHTML=L.length?L.map(m=>`<button class="mr" data-m="${m.id}">${miHTML(m.id)}<span><b>${m.name}</b><small>${m.sub}</small></span></button>`).join(''):'<p class="hint" style="margin:0 0 12px">Nenhum remédio encontrado. Por enquanto: Top Gard Plus e Mellis Vet (meloxicam).</p>';
+  fixImgs($('#medRes'));
+}
+$('#medQ').oninput=renderMedSearch;
+const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>';
+function openMed(id){document.querySelector('#calcBody>.seg [data-m="'+id+'"]').click();$('#calcHome').classList.add('hide');$('#calcBody').classList.remove('hide');scrollTo({top:0})}
+$('#backHome').onclick=()=>{$('#calcBody').classList.add('hide');$('#calcHome').classList.remove('hide');scrollTo({top:0})};
+$('#medRes').onclick=e=>{const b=e.target.closest('.mr');if(!b)return;openMed(b.dataset.m);$('#medQ').value='';renderMedSearch()};
+function renderCar(){
+  $('#car').innerHTML=MEDS.map(m=>`<button class="cc" data-m="${m.id}"><span class="seal">${SUN}${m.seal}</span>${miHTML(m.id)}<span><b>${m.name}</b><small>${m.sub}</small><span class="go">Calcular dose</span></span></button>`).join('');
+  $('#dots').innerHTML=MEDS.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('');
+  fixImgs($('#car'));
+}
+$('#car').onclick=e=>{const b=e.target.closest('.cc');if(b)openMed(b.dataset.m)};
+$('#car').onscroll=()=>{const c=$('#car'),w=c.firstElementChild?c.firstElementChild.offsetWidth+12:1,i=Math.round(c.scrollLeft/w);$$('#dots i').forEach((x,j)=>x.classList.toggle('on',j==i))};
+let carT=0;$('#car').addEventListener('touchstart',()=>{carT=Date.now()+9000},{passive:true});
+setInterval(()=>{const c=$('#car');if(Date.now()<carT||c.offsetParent===null||MEDS.length<2||!c.firstElementChild)return;const w=c.firstElementChild.offsetWidth+12,i=Math.round(c.scrollLeft/w);c.scrollTo({left:((i+1)%MEDS.length)*w,behavior:'smooth'})},4500);
+renderCar();
+const PROB={tag:'Complemente o tratamento',name:'Probiótico Pet - Avert (14 g)',price:'R$ 37,90',
+ short:'Ajuda a manter a flora intestinal equilibrada durante e depois do vermífugo, em cães e gatos.',
+ paras:[
+  ['O que é','suplemento alimentar em bastão, com bactérias probióticas (Enterococcus faecium e Lactobacillus acidophilus), para cães e gatos. Ajuda a manter a flora intestinal equilibrada.'],
+  ['Por que dar junto com o vermífugo','os vermes vivem no intestino e o vermífugo age ali. Em alguns animais, o intestino fica sensível e a flora de bactérias boas se desequilibra, podendo surgir fezes moles ou enjoo passageiros. O probiótico repõe bactérias benéficas e pode ajudar a digestão a se normalizar durante e depois do tratamento.'],
+  ['Como dar','filhotes, gatos e cães de raças pequenas: 2 g por dia. Adultos: 4 g por dia, ou conforme a embalagem e a orientação do veterinário.']]};
+
 /* ---------- Top Gard Plus: vários animais ---------- */
 const animals=[{name:'',sp:'dog',w:''}];
 function renderAnimals(){
@@ -692,9 +855,11 @@ function calcTop(){
   });
   const bx=Math.ceil(tot/box),left=bx*box-tot;
   h+=`<div class="res best"><h3>Resumo para levar${L.length>1?' ('+L.length+' animais)':''}</h3><p>Total do tratamento: <b>${pl(tot)}</b><br>Levar: <b>${cx(bx)}</b> (cada caixa vem com ${nf(box)})</p>${left?`<p class="keep">Sobram <b>${pl(left)}</b> na caixa. Guarde para o reforço, daqui a uns 3 ou 6 meses.</p>`:''}</div>`;
+  h+=`<div class="res"><h3><span>Sugestão<small>${PROB.name} - ${PROB.price}</small></span></h3><p>${PROB.short}</p><p class="hint" style="margin:6px 0 0">O PDF explica o porquê e como usar.</p></div>`;
+  txt+='\nSugestão: '+PROB.name+' - '+PROB.price+'\n';
   txt+='\nTotal: '+pl(tot)+' = '+cx(bx)+(left?'\nSobram '+pl(left)+' para o reforço (daqui a 3 ou 6 meses)':'');
   summary=txt;
-  report={id:'top',title:'Top Gard Plus',desc:'Vermífugo (praziquantel + pirantel + febantel) em comprimido de 600 mg, da Vansil. Combate vermes redondos e tênias em cães e gatos adultos.',animals:R,totalsTitle:'Resumo para levar',
+  report={id:'top',title:'Top Gard Plus',desc:'Vermífugo (praziquantel + pirantel + febantel) em comprimido de 600 mg, da Vansil. Combate vermes redondos e tênias em cães e gatos adultos.',animals:R,comp:PROB,totalsTitle:'Resumo para levar',
     totals:[['Animais',String(L.length)],['Aplicações',n+(n>1?' vezes (a cada '+gap+' dias)':' vez')],['Total de comprimidos',pl(tot)],['Caixas a levar',cx(bx)+' ('+nf(box)+' comprimidos cada)']].concat(left?[['Sobram na caixa',pl(left)+' - guardar para o reforço (daqui a 3 ou 6 meses)']]:[]),
     notes:['Dose conforme a bula: cães até 2 kg, um quarto de comprimido; de 2 a 5 kg, meio; de 5 a 10 kg, 1; acima de 10 kg, 1 comprimido a cada 10 kg. Gatos: um quarto de comprimido a cada 2 kg.','Em caso de dúvida, consulte o médico-veterinário.']};
   $('#cOut').innerHTML=h;
@@ -770,6 +935,63 @@ $('#tList').onclick=async e=>{
   else if(a=='t'){if(isDone(t)){if(await askPass('Senha para desmarcar a tarefa','emp'))await store.save({...t,doneAt:'',proof:'',log:addLog(t,'d',nowS())},'tarefas')}else openDone(t)}
   else if(await ask('Excluir esta tarefa?')&&await askPass('Senha do gerente para excluir a tarefa','mgr'))await store.del(t.id,'tarefas');
 };
+
+/* ---------- notificações e lembretes ---------- */
+const nCfg=(()=>{const d={on:false,sound:true,who:'',pre:10};try{return{...d,...JSON.parse(localStorage.lnotif||'{}')}}catch{return d}})();
+const saveN=()=>{try{localStorage.lnotif=JSON.stringify(nCfg)}catch{}};
+let nSeen={d:'',k:{}};try{nSeen=JSON.parse(localStorage.lseen||'{}')}catch{}
+if(!nSeen||!nSeen.k)nSeen={d:'',k:{}};
+const saveSeen=()=>{try{localStorage.lseen=JSON.stringify(nSeen)}catch{}};
+let ac=null;
+const unlockAudio=()=>{try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state!='running')ac.resume()}catch{}};
+addEventListener('pointerdown',unlockAudio,{passive:true});
+function beep(n=3){
+  if(!nCfg.sound||!ac||ac.state!='running')return;
+  for(let i=0;i<n;i++){const t=ac.currentTime+i*.25,o=ac.createOscillator(),g=ac.createGain();o.type='square';o.frequency.value=i%2?988:1318;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+.2)}
+}
+let bt;
+function banner(t,m){$('#bTit').textContent=t;$('#bTxt').textContent=m;const b=$('#bell');b.classList.remove('hide');b.style.animation='none';void b.offsetWidth;b.style.animation='';clearTimeout(bt);bt=setTimeout(()=>b.classList.add('hide'),9000)}
+$('#bell').onclick=()=>{$('#bell').classList.add('hide');document.querySelector('nav [data-t="chk"]').click()};
+async function notify(title,body,id){
+  banner(title,body);beep(3);try{navigator.vibrate&&navigator.vibrate([200,100,200,100,300])}catch{}
+  if('Notification' in window&&Notification.permission=='granted'){try{const r=await navigator.serviceWorker.ready;r.showNotification(title,{body,icon:'icon-192.png',badge:'icon-192.png',tag:'lindner-'+id,renotify:true,vibrate:[200,100,200,100,300]})}catch{}}
+}
+const m2=s=>{const p=s.split(':');return +p[0]*60+ +p[1]};
+function checkReminders(){
+  if(!nCfg.on)return;
+  const day=today();if(nSeen.d!==day)nSeen={d:day,k:{}};
+  const now=m2(nowHM());
+  tasks.forEach(t=>{
+    if(!t.due||isDone(t))return;
+    if(nCfg.who&&t.who){const e=empOf(t);if(e.id&&e.id!==nCfg.who)return}
+    const diff=m2(t.due)-now;let st=null,title,body;
+    if(diff>0){if(nCfg.pre>0&&diff<=nCfg.pre){st='pre';title='Lembrete de tarefa';body=t.text+' - faltam '+diff+' min (até '+t.due+')'}}
+    else if(diff>-15){st='due';title='Hora da tarefa';body=t.text+' - o horário limite é '+t.due}
+    else{st='late'+Math.min(Math.floor(-diff/15),8);title='Tarefa atrasada';body=t.text+' - atrasada '+(-diff)+' min (limite '+t.due+')'}
+    if(!st)return;
+    const key=t.id+'|'+st;if(nSeen.k[key])return;nSeen.k[key]=1;saveSeen();notify(title,body,t.id);
+  });
+}
+function updN(){
+  const p='Notification' in window?Notification.permission:'unsupported';
+  $('#nStatus').textContent=(nCfg.on?'Lembretes ligados. ':'Lembretes desligados. ')+(p=='granted'?'Notificações do celular liberadas.':p=='denied'?'Notificações bloqueadas no Chrome: libere nas configurações do site.':p=='unsupported'?'Este navegador não mostra notificações do celular, só o aviso dentro do app.':'Ao ativar, o Chrome vai pedir permissão para notificar.');
+  $('#nEnable').textContent=nCfg.on?'Desligar lembretes':'Ativar lembretes';
+}
+$('#nOpen').onclick=()=>{
+  $('#nWho').innerHTML='<option value="">Todos (todas as tarefas)</option>'+emps.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');
+  $('#nWho').value=nCfg.who;$('#nSound').checked=nCfg.sound;$('#nPre').value=String(nCfg.pre);
+  updN();view('notif');open();
+};
+$('#nEnable').onclick=async()=>{
+  unlockAudio();
+  if(nCfg.on){nCfg.on=false;saveN();updN();return}
+  if('Notification' in window&&Notification.permission=='default'){try{await Notification.requestPermission()}catch{}}
+  nCfg.on=true;saveN();updN();toast('Lembretes ativados ✓');
+};
+$('#nSave').onclick=()=>{nCfg.sound=$('#nSound').checked;nCfg.who=$('#nWho').value;nCfg.pre=+$('#nPre').value;saveN();close();toast('Configurações salvas ✓')};
+$('#nTest').onclick=()=>{unlockAudio();setTimeout(()=>notify('Teste de lembrete','Se você ouviu o bip e viu este aviso, está funcionando.','teste'),150)};
+setInterval(checkReminders,20000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkReminders()});
 
 /* ---------- proteção: sem seleção, cópia, menu e atalhos de inspeção ---------- */
 const inField=e=>{const t=e.target.nodeType==1?e.target:e.target.parentElement;return !!(t&&t.closest('input,textarea'))};
